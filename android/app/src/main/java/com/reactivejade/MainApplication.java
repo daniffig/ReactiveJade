@@ -8,6 +8,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
+import com.reactivejade.CustomToastPackage; // <-- Add this line with your package name.
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,7 +24,8 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage()
+          new MainReactPackage(),
+          new CustomToastPackage() // <-- Add this line with your package name.
       );
     }
 
