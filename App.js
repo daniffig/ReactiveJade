@@ -11,6 +11,8 @@ import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 
 import ToastExample from './ToastExample';
 
+import DeviceInfo from 'react-native-device-info';
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
@@ -25,12 +27,15 @@ export default class App extends Component<Props> {
   }
 
   render() {
+    carrierName = DeviceInfo.getCarrier();
+
     return (
       <View style={styles.container}>
         <Button
           onPress={this.handlePress}
           title="Toast"
         />
+        <Text style={styles.welcome}>{carrierName}</Text>
         <Text style={styles.welcome}>Welcome to React Native!</Text>
         <Text style={styles.instructions}>To get started, edit App.js</Text>
         <Text style={styles.instructions}>{instructions}</Text>
