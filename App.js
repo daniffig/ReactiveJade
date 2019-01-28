@@ -14,6 +14,8 @@ import ToastExample from './ToastExample';
 
 import DeviceInfo from 'react-native-device-info';
 
+import DeviceEventEmitter from 'react-native';
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
@@ -23,7 +25,14 @@ const instructions = Platform.select({
 
 type Props = {};
 export default class App extends Component<Props> {
+
+  componentWillMount() {
+  }
+
   handlePress() {
+    DeviceEventEmitter.addListener("testMsg", function (e) {
+      ToastExample.show("msg", ToastExample.SHORT);
+    });
     // AgentComponent.show(
     //   'fede14',
     //   (msg) => {
