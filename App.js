@@ -9,6 +9,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 
+import AgentComponent from './AgentComponent';
 import ToastExample from './ToastExample';
 
 import DeviceInfo from 'react-native-device-info';
@@ -23,7 +24,24 @@ const instructions = Platform.select({
 type Props = {};
 export default class App extends Component<Props> {
   handlePress() {
-    ToastExample.show('Awesome', ToastExample.SHORT);
+    // AgentComponent.show(
+    //   'fede14',
+    //   (msg) => {
+    //     console.warn(msg);
+    //   },
+    //   (value) => {
+    //     ToastExample.show(value, ToastExample.SHORT);
+    //   }
+    // )
+
+    AgentComponent.start(
+      (msg) => {
+        console.warn(msg);
+      },
+      (msg) => {
+        console.warn(msg);
+      }
+    )
   }
 
   render() {
