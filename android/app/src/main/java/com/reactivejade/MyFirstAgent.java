@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 
+import android.os.Debug;
+
 public class MyFirstAgent extends Agent {
 
   private final static Logger logger = Logger.getLogger("com.reactivejade.MyFirstAgent");
@@ -35,6 +37,11 @@ public class MyFirstAgent extends Agent {
         WritableMap params = Arguments.createMap();
 
         params.putString("msg", "General Kenobi!");
+        params.putString("freeMemory", String.valueOf(Runtime.getRuntime().freeMemory()));
+        // params.putString("maxMemory", String.valueOf(Runtime.getRuntime().maxMemory()));
+        params.putString("totalNativeMemory", String.valueOf(Debug.getNativeHeapAllocatedSize()));
+        params.putString("freeNativeMemory", String.valueOf(Debug.getNativeHeapFreeSize()));
+        params.putString("nativeMemory", String.valueOf(Debug.getNativeHeapSize()));
 
         sendEvent("testMsg", params);
       }

@@ -10,7 +10,6 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Button} from 'react-native';
 
 import AgentComponent from './AgentComponent';
-import ToastExample from './ToastExample';
 
 import DeviceInfo from 'react-native-device-info';
 
@@ -36,7 +35,9 @@ export default class App extends Component<Props> {
 
   componentWillMount() {
     DeviceEventEmitter.addListener('testMsg', function(params) {
-      console.log(params.msg);
+      console.log(params);
+      // console.log(params.freeMemory);
+      // console.log(params.maxMemory);
       console.log('componentWillMount');
     })
   }
