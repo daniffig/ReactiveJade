@@ -41,15 +41,22 @@ public class AgentModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void show(
-      String value,
+  public void stop(
+      String agentName,
       Callback errorCallback,
-      Callback successCallback) {
-    try {
-      successCallback.invoke(value);
-    } catch (Exception e) {
-      errorCallback.invoke(e.getMessage());
-    }    
+      Callback successCallback
+  ) {
+    if (MicroRuntime.isRunning()) {
+      try {
+        MicroRuntime.killAgent("ag");
+
+        successCallback.invoke("agent ag successfully stopped!");
+      } catch (Exception e) {
+
+      }
+    } else {
+      errorCallback.invoke("runtime not running");
+    }
   }
 
   @ReactMethod
@@ -72,17 +79,13 @@ public class AgentModule extends ReactContextBaseJavaModule {
             "ag",
             MyFirstAgent.class.getName(),
             new Object[] {
-              getReactApplicationContext(),
-              successCallback
+              getReactApplicationContext()
             }
         );
 
-        logger.log(Level.WARNING, "it's working!");
-
-        // successCallback.invoke("it's working!");
+        successCallback.invoke("lolo");
       } catch (Exception e) {
-        logger.log(Level.WARNING, "Agent start failed!");
-        // errorCallback.invoke("error while starting agent!");
+        errorCallback.invoke("error while starting agent!");
       }
     }
 

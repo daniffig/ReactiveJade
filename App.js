@@ -26,33 +26,52 @@ const instructions = Platform.select({
 type Props = {};
 export default class App extends Component<Props> {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      agent: null
+    }
+  }
+
   componentWillMount() {
-    DeviceEventEmitter.addListener('testMsg', function(e) {
+    DeviceEventEmitter.addListener('testMsg', function(params) {
+      console.log(params.msg);
       console.log('componentWillMount');
     })
   }
 
-  aToastFunction = () => {
-    console.log('aToastFunction');
-
-    // console.log(DeviceEventEmitter.DeviceEventEmitter);
-
-    // ToastExample.show("msg", ToastExample.SHORT);
-  }
-
-  handlePress = () => {
-    console.log('handlePress');
-
-    this.aToastFunction();
+  startAgent = () => {
+    console.log('startAgent');
 
     AgentComponent.start(
       (msg) => {
         console.warn(msg);
       },
-      (msg) => {
-        console.warn(msg);
+      (agent) => {
+        this.setState({agent});
       }
     )
+  }
+
+  stopAgent = () => {
+    console.log('stopAgent');
+
+    AgentComponent.stop(
+      'ag',
+      (msg) => {
+        console.log(msg);
+      },
+      (msg) => {
+        console.log(msg);
+      }
+    )
+
+    // if (this.state.agent != null) {
+    //   console.log(this.state.agent);
+    // }
+
+    console.log(this.state);
   }
 
   render() {
@@ -61,8 +80,12 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         <Button
-          onPress={this.handlePress}
-          title="Toast"
+          onPress={this.startAgent}
+          title="Start Agent"
+        />
+        <Button
+          onPress={this.stopAgent}
+          title="Stop Agent"
         />
         <Text style={styles.welcome}>{carrierName}</Text>
         <Text style={styles.welcome}>Welcome to React Native!</Text>
