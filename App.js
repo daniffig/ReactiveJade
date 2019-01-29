@@ -14,7 +14,7 @@ import ToastExample from './ToastExample';
 
 import DeviceInfo from 'react-native-device-info';
 
-import DeviceEventEmitter from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -27,21 +27,23 @@ type Props = {};
 export default class App extends Component<Props> {
 
   componentWillMount() {
+    DeviceEventEmitter.addListener('testMsg', function(e) {
+      console.log('componentWillMount');
+    })
   }
 
-  handlePress() {
-    DeviceEventEmitter.addListener("testMsg", function (e) {
-      ToastExample.show("msg", ToastExample.SHORT);
-    });
-    // AgentComponent.show(
-    //   'fede14',
-    //   (msg) => {
-    //     console.warn(msg);
-    //   },
-    //   (value) => {
-    //     ToastExample.show(value, ToastExample.SHORT);
-    //   }
-    // )
+  aToastFunction = () => {
+    console.log('aToastFunction');
+
+    // console.log(DeviceEventEmitter.DeviceEventEmitter);
+
+    // ToastExample.show("msg", ToastExample.SHORT);
+  }
+
+  handlePress = () => {
+    console.log('handlePress');
+
+    this.aToastFunction();
 
     AgentComponent.start(
       (msg) => {
