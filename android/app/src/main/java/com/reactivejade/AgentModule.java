@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 public class AgentModule extends ReactContextBaseJavaModule {
 
   private final static Logger logger = Logger.getLogger("com.reactivejade.AgentModule");
+  private AgentContainer agentContainer;
+  private AgentController myAgent;
 
   public AgentModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -46,17 +48,24 @@ public class AgentModule extends ReactContextBaseJavaModule {
       Callback errorCallback,
       Callback successCallback
   ) {
-    if (MicroRuntime.isRunning()) {
+    if (myAgent != null) {
       try {
-        MicroRuntime.killAgent("ag");
-
-        successCallback.invoke("agent ag successfully stopped!");
+        myAgent.kill();
       } catch (Exception e) {
 
       }
-    } else {
-      errorCallback.invoke("runtime not running");
     }
+    // if (MicroRuntime.isRunning()) {
+    //   try {
+    //     MicroRuntime.killAgent("ag");
+
+    //     successCallback.invoke("agent ag successfully stopped!");
+    //   } catch (Exception e) {
+
+    //   }
+    // } else {
+    //   errorCallback.invoke("runtime not running");
+    // }
   }
 
   @ReactMethod
@@ -64,30 +73,62 @@ public class AgentModule extends ReactContextBaseJavaModule {
       Callback errorCallback,
       Callback successCallback) {
 
-    Properties profile = new Properties();
-    profile.setProperty(Profile.PLATFORM_ID, "Xiaomi Mi 8");
-    profile.setProperty(Profile.MAIN_HOST, "localhost");
-    profile.setProperty(Profile.MAIN_PORT, "8888");
+    // Properties profile = new Properties();
+    //properties.setProperty(Profile.PLATFORM_ID, "JADE");
+    // profile.setProperty(Profile.MAIN_HOST, "192.168.0.6");
+    // profile.setProperty(Profile.MAIN_PORT, "1099");
 
-    MicroRuntime.startJADE(profile, null);
+    Profile profile = new ProfileImpl();
+    profile.setParameter(Profile.MAIN, "peripheral");
+    profile.setParameter(Profile.CONTAINER_NAME, "Xiaomi Mi 8");
+    profile.setParameter(Profile.MAIN_HOST, "192.168.0.6");
+    profile.setParameter(Profile.MAIN_PORT, "1099");
 
-    if (!MicroRuntime.isRunning()) {
-      errorCallback.invoke("error!");
-    } else {
+    // Profile profile = new ProfileImpl(properties);
+
+    Runtime runtime = Runtime.instance();
+
+    if (agentContainer == null) {
+      agentContainer = runtime.createAgentContainer(profile);
+    }
+
+    if (myAgent == null) {
       try {
-        MicroRuntime.startAgent(
-            "ag",
-            MyFirstAgent.class.getName(),
-            new Object[] {
-              getReactApplicationContext()
-            }
+        myAgent = agentContainer.createNewAgent(
+          "myFirstAgent",
+          MyFirstAgent.class.getName(),
+          new Object[] {
+            getReactApplicationContext()
+          }
         );
 
-        successCallback.invoke("lolo");
+        // successCallback.invoke(agentContainer.getPlatformController().getName());
       } catch (Exception e) {
-        errorCallback.invoke("error while starting agent!");
+        errorCallback.invoke("An error happened while creating yout agent.");
       }
     }
+
+    // Runtime.instance().startUp(profile);
+
+    //MicroRuntime.startJADE(profile, null);
+
+    // if (!MicroRuntime.isRunning()) {
+    //   errorCallback.invoke("error!");
+    // } else {
+    //   try {
+    //     MicroRuntime.startAgent(
+    //         "ag",
+    //         MyFirstAgent.class.getName(),
+    //         new Object[] {
+    //           getReactApplicationContext()
+    //         }
+    //     );
+
+    //     successCallback.invoke("lolo");
+    //   } catch (Exception e) {
+    //     errorCallback.invoke("error while starting agent!");
+    //   }
+    // }
 
     // Runtime rt = Runtime.instance();
     // // final Properties profile = new Properties();

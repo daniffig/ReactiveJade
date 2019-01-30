@@ -6,7 +6,7 @@ public class MyFirstAgent extends Agent {
   protected void setup() {
     System.out.println("Hello there! from " + getAID().getName());
 
-    addBehaviour(new TickerBehaviour(this, 2000) {
+    addBehaviour(new TickerBehaviour(this, 20000) {
       protected void onTick() {
         System.out.println("General Kenobi!");
       }

@@ -50,7 +50,8 @@ export default class App extends Component<Props> {
         console.warn(msg);
       },
       (agent) => {
-        this.setState({agent});
+        console.log(agent);
+        // this.setState({agent});
       }
     )
   }
