@@ -12,12 +12,14 @@ import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.Agent;
-import jade.core.behaviours.TickerBehaviour;
+import jade.core.Location;
 import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
 import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.util.leap.Iterator;
 
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +33,10 @@ public class MyFirstAgent extends Agent {
 
   private ReactContext reactContext;
 
+  public Vector<Location> platformContainers;
+  public int currentContainerId;
+  public Location sourceContainer;
+
   protected void setup() {
     Object[] args = getArguments();
 
@@ -41,25 +47,38 @@ public class MyFirstAgent extends Agent {
       }
     }
 
-    addBehaviour(new TickerBehaviour(this, 2000) {
-      protected void onTick() {
-        logger.log(Level.INFO, "Hello!");
+    // We add this to prevent "Unknown language fipa-sl" exception
+    // as read on http://jade.tilab.com/pipermail/jade-develop/2007q4/011473.html
+    this.getContentManager().registerLanguage(new SLCodec());
+    this.getContentManager().registerOntology(MobilityOntology.getInstance());
 
-        WritableMap params = Arguments.createMap();
+    this.currentContainerId = 0;
+    this.sourceContainer = this.here();
 
-        params.putString("msg", "General Kenobi!");
-        params.putString("freeMemor", String.valueOf(Runtime.getRuntime().freeMemory()));
-        // params.putString("maxMemory", String.valueOf(Runtime.getRuntime().maxMemory()));
-        params.putString("totalNativeMemory", String.valueOf(Debug.getNativeHeapAllocatedSize()));
-        params.putString("freeNativeMemory", String.valueOf(Debug.getNativeHeapFreeSize()));
-        params.putString("nativeMemory", String.valueOf(Debug.getNativeHeapSize()));
+    fetchPlatformContainers();
 
-        sendEvent("testMsg", params);
+    sendLog(String.valueOf(platformContainers.size()));
 
-        MyFirstAgent.this.getPlatformContainers();
-      }
-    });
+    addBehaviour(new ReactiveJadeBehaviour(this, 2000L));
+  }
 
+  @Override
+  protected void beforeMove() {
+    sendLog("beforeMove");
+    super.beforeMove();
+  }
+
+  @Override
+  protected void afterMove() {
+    sendLog("afterMove");
+
+    if (currentContainerId < platformContainers.size()) {
+      currentContainerId = currentContainerId + 1;
+    } else {
+      doMove(sourceContainer);
+    }
+
+    super.afterMove();
   }
 
   protected void takeDown() {
@@ -75,19 +94,27 @@ public class MyFirstAgent extends Agent {
         .emit(eventName, params);
   }
 
-  public void getPlatformContainers() {
-    // WritableMap params = Arguments.createMap();
+  // Helper method to send logs easily. :)
+  public void sendLog(
+      String log
+  ) {
 
-    // params.putString("size", "failure!");
+    WritableMap params = Arguments.createMap();
 
-    // sendEvent("getContainers", params);
+    params.putString("log", log);
 
+    this.sendEvent("log", params);
+  }
+
+  public void fetchPlatformContainers() {
     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 
     request.setLanguage((new SLCodec()).getName());
     request.setOntology(MobilityOntology.getInstance().getName());
 
     Action action = new Action(this.getAMS(), new QueryPlatformLocationsAction());
+
+    this.platformContainers = new Vector<Location>();
 
     try {
       this.getContentManager().fillContent(request, action);
@@ -107,11 +134,15 @@ public class MyFirstAgent extends Agent {
 
       Result result = (Result) contentElement;
 
-      WritableMap params = Arguments.createMap();
+      Iterator iterator = result.getItems().iterator();
 
-      params.putInt("size", result.getItems().size());
+      while (iterator.hasNext()) {
+        this.platformContainers.add((Location) iterator.next());
+      }
 
-      sendEvent("getContainers", params);
+      for (Location location : this.platformContainers) {
+        this.sendLog(location.getName());
+      }
     } catch (Exception e) {
       WritableMap params = Arguments.createMap();
 

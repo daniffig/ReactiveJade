@@ -34,6 +34,10 @@ export default class App extends Component<Props> {
   }
 
   componentWillMount() {
+    DeviceEventEmitter.addListener('log', function(params) {
+      console.log(params.log);
+    });
+
     DeviceEventEmitter.addListener('testMsg', function(params) {
       console.log(params);
       // console.log(params.freeMemory);
@@ -52,12 +56,11 @@ export default class App extends Component<Props> {
     AgentComponent.start(
       '10.1.37.240',
       '1099',
-      (msg) => {
-        console.warn(msg);
+      (errorMessage) => {
+        console.warn(errorMessage);
       },
-      (agent) => {
-        console.log(agent);
-        // this.setState({agent});
+      (agentName) => {
+        console.log("Agent successfully created with name " + agentName);
       }
     )
   }

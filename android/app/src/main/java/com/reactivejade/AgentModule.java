@@ -62,6 +62,7 @@ public class AgentModule extends ReactContextBaseJavaModule {
       try {
         this.agentContainer.kill();
         this.agentContainer = null;
+        this.agentController = null;
 
         errorCallback.invoke("success!");
       } catch (Exception e) {
@@ -75,10 +76,11 @@ public class AgentModule extends ReactContextBaseJavaModule {
       String mainPort
   ) {
     Profile profile = new ProfileImpl();
-    profile.setParameter(Profile.MAIN, "peripheral");
+    profile.setParameter(Profile.MAIN, Boolean.FALSE.toString());
     profile.setParameter(Profile.CONTAINER_NAME, "Xiaomi Mi 8");
     profile.setParameter(Profile.MAIN_HOST, mainHost);
     profile.setParameter(Profile.MAIN_PORT, mainPort);
+    profile.setParameter(Profile.JVM, Profile.ANDROID);
 
     return Runtime.instance().createAgentContainer(profile);
   }
@@ -92,7 +94,10 @@ public class AgentModule extends ReactContextBaseJavaModule {
 
     if (this.agentContainer == null) {
       this.agentContainer = this.startContainer(mainHost, mainPort);
+    } else {
+      errorCallback.invoke(this.agentContainer.getPlatformName());
     }
+
 
     if (this.agentController == null) {
       try {
@@ -111,51 +116,6 @@ public class AgentModule extends ReactContextBaseJavaModule {
         errorCallback.invoke(e.getMessage());
       }
     }
-
-    // Runtime.instance().startUp(profile);
-
-    //MicroRuntime.startJADE(profile, null);
-
-    // if (!MicroRuntime.isRunning()) {
-    //   errorCallback.invoke("error!");
-    // } else {
-    //   try {
-    //     MicroRuntime.startAgent(
-    //         "ag",
-    //         MyFirstAgent.class.getName(),
-    //         new Object[] {
-    //           getReactApplicationContext()
-    //         }
-    //     );
-
-    //     successCallback.invoke("lolo");
-    //   } catch (Exception e) {
-    //     errorCallback.invoke("error while starting agent!");
-    //   }
-    // }
-
-    // Runtime rt = Runtime.instance();
-    // // final Properties profile = new Properties();
-    // // profile.setProperty(Profile.MAIN_HOST, "localhost");
-    // // profile.setProperty(Profile.MAIN_PORT, 8888);
-    // // profile.setProperty(Profile.MAIN, Boolean.FALSE.toString());
-    // // profile.setProperty(Profile.JVM, Profile.ANDROID);
-    // Profile profile = new ProfileImpl("localhost", 8888, "main");
-    // AgentContainer mainContainer = rt.createMainContainer(profile);
-
-    // AgentController myFirstAgent = null;
-
-    // try {
-    //   myFirstAgent = mainContainer.createNewAgent(
-    //       "myFirstAgent",
-    //       "com.reactivejade.MyFirstAgent",
-    //       new Object[] { getReactApplicationContext(), successCallback });
-
-    //   myFirstAgent.start();
-    //   // successCallback.invoke("Success!");
-    // } catch (Exception e) {
-    //   errorCallback.invoke(e.getMessage());
-    // }
   }
 
   @ReactMethod
