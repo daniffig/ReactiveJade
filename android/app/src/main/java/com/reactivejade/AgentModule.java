@@ -30,8 +30,9 @@ import java.util.logging.Logger;
 public class AgentModule extends ReactContextBaseJavaModule {
 
   private final static Logger logger = Logger.getLogger("com.reactivejade.AgentModule");
+  
   private AgentContainer agentContainer;
-  private AgentController myAgent;
+  private AgentController agentController;
 
   public AgentModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -43,58 +44,59 @@ public class AgentModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void killAgent(
+      Callback callback
+  ) {
+
+  }
+
+  @ReactMethod
   public void stop(
       String agentName,
       Callback errorCallback,
       Callback successCallback
   ) {
-    if (myAgent != null) {
+    if (this.agentContainer == null) {
+      errorCallback.invoke("agentContainer is null");
+    } else {
       try {
-        myAgent.kill();
-      } catch (Exception e) {
+        this.agentContainer.kill();
+        this.agentContainer = null;
 
+        errorCallback.invoke("success!");
+      } catch (Exception e) {
+        errorCallback.invoke(e.getMessage());
       }
     }
-    // if (MicroRuntime.isRunning()) {
-    //   try {
-    //     MicroRuntime.killAgent("ag");
+  }
 
-    //     successCallback.invoke("agent ag successfully stopped!");
-    //   } catch (Exception e) {
+  private AgentContainer startContainer(
+      String mainHost,
+      String mainPort
+  ) {
+    Profile profile = new ProfileImpl();
+    profile.setParameter(Profile.MAIN, "peripheral");
+    profile.setParameter(Profile.CONTAINER_NAME, "Xiaomi Mi 8");
+    profile.setParameter(Profile.MAIN_HOST, mainHost);
+    profile.setParameter(Profile.MAIN_PORT, mainPort);
 
-    //   }
-    // } else {
-    //   errorCallback.invoke("runtime not running");
-    // }
+    return Runtime.instance().createAgentContainer(profile);
   }
 
   @ReactMethod
   public void start(
+      String mainHost,
+      String mainPort,
       Callback errorCallback,
       Callback successCallback) {
 
-    // Properties profile = new Properties();
-    //properties.setProperty(Profile.PLATFORM_ID, "JADE");
-    // profile.setProperty(Profile.MAIN_HOST, "192.168.0.6");
-    // profile.setProperty(Profile.MAIN_PORT, "1099");
-
-    Profile profile = new ProfileImpl();
-    profile.setParameter(Profile.MAIN, "peripheral");
-    profile.setParameter(Profile.CONTAINER_NAME, "Xiaomi Mi 8");
-    profile.setParameter(Profile.MAIN_HOST, "192.168.0.6");
-    profile.setParameter(Profile.MAIN_PORT, "1099");
-
-    // Profile profile = new ProfileImpl(properties);
-
-    Runtime runtime = Runtime.instance();
-
-    if (agentContainer == null) {
-      agentContainer = runtime.createAgentContainer(profile);
+    if (this.agentContainer == null) {
+      this.agentContainer = this.startContainer(mainHost, mainPort);
     }
 
-    if (myAgent == null) {
+    if (this.agentController == null) {
       try {
-        myAgent = agentContainer.createNewAgent(
+        this.agentController = this.agentContainer.createNewAgent(
           "myFirstAgent",
           MyFirstAgent.class.getName(),
           new Object[] {
@@ -102,9 +104,11 @@ public class AgentModule extends ReactContextBaseJavaModule {
           }
         );
 
-        // successCallback.invoke(agentContainer.getPlatformController().getName());
+        this.agentController.start();
+
+        successCallback.invoke(this.agentController.getName());
       } catch (Exception e) {
-        errorCallback.invoke("An error happened while creating yout agent.");
+        errorCallback.invoke(e.getMessage());
       }
     }
 
@@ -152,6 +156,12 @@ public class AgentModule extends ReactContextBaseJavaModule {
     // } catch (Exception e) {
     //   errorCallback.invoke(e.getMessage());
     // }
+  }
+
+  @ReactMethod
+  public void getContainers(
+      Callback callback
+  ) {
   }
 }
 

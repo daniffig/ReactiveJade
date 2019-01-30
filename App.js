@@ -39,6 +39,10 @@ export default class App extends Component<Props> {
       // console.log(params.freeMemory);
       // console.log(params.maxMemory);
       console.log('componentWillMount');
+    });
+
+    DeviceEventEmitter.addListener('getContainers', function(params) {
+      console.log(params);
     })
   }
 
@@ -46,6 +50,8 @@ export default class App extends Component<Props> {
     console.log('startAgent');
 
     AgentComponent.start(
+      '10.1.37.240',
+      '1099',
       (msg) => {
         console.warn(msg);
       },
@@ -76,6 +82,14 @@ export default class App extends Component<Props> {
     console.log(this.state);
   }
 
+  getContainers = () => {
+    AgentComponent.getContainers(
+      (msg) => {
+        console.log(msg);
+      }
+    );
+  }
+
   render() {
     carrierName = DeviceInfo.getCarrier();
 
@@ -88,6 +102,10 @@ export default class App extends Component<Props> {
         <Button
           onPress={this.stopAgent}
           title="Stop Agent"
+        />
+        <Button
+          onPress={this.getContainers}
+          title="getContainers"
         />
         <Text style={styles.welcome}>{carrierName}</Text>
         <Text style={styles.welcome}>Welcome to React Native!</Text>
