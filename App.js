@@ -35,9 +35,9 @@ export default class App extends Component<Props> {
   }
 
   componentWillMount() {
-    DeviceEventEmitter.addListener('log', function() {
+    DeviceEventEmitter.addListener('log', function(params) {
       console.log('fede');
-      // console.log(params.log);
+      console.log(params);
     });
 
     DeviceEventEmitter.addListener('testMsg', function(params) {

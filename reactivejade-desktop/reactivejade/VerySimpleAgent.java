@@ -15,6 +15,8 @@ public class VerySimpleAgent extends Agent implements ReactiveJadeEventEmitter {
   @Override
   public void fireEvent(ReactiveJadeEvent event) {
     for (ReactiveJadeEventListener listener : listeners) {
+      ((ReactiveJadeEventListener) listener).sendFakeString("VerySimpleAgent.fireEvent");
+      ((ReactiveJadeEventListener) listener).sendFakeString(event.getEventName());
       listener.reactiveJadeEventReceived(event);
     }
   }
@@ -25,8 +27,11 @@ public class VerySimpleAgent extends Agent implements ReactiveJadeEventEmitter {
     if (args != null && args.length > 0) {
       for (Object listener : args) {
         this.addListener((ReactiveJadeEventListener) listener);
+        ((ReactiveJadeEventListener) listener).sendFakeString("VerySimpleAgent.addListener");
       }
     }
+
+    fireEvent(new ReactiveJadeEvent(this, "log", "VerySimpleAgent.setup"));
 
     ContainerID destination = new ContainerID();
     destination.setName("Main-Container");

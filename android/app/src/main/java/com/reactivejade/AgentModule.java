@@ -129,10 +129,20 @@ public class AgentModule extends ReactContextBaseJavaModule implements ReactiveJ
     }
   }
 
-  public void reactiveJadeEventReceived(ReactiveJadeEvent event) {
+  @Override
+  public void sendFakeString(String string) {
+    this.sendFakeEvent(string);
+  }
+
+  public void sendFakeEvent(String text) {
     getReactApplicationContext()
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-      .emit("log", event);
+      .emit("log", text);
+  }
+
+  @Override
+  public void reactiveJadeEventReceived(ReactiveJadeEvent event) {
+    this.sendFakeEvent("event found!");
   }
 
   @ReactMethod
