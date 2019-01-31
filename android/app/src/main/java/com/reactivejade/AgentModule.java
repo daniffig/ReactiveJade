@@ -2,13 +2,14 @@
 
 package com.reactivejade;
 
-import reactivejade.agents.VerySimpleAgent;
+import reactivejade.*;
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +30,7 @@ import jade.core.MicroRuntime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class AgentModule extends ReactContextBaseJavaModule {
+public class AgentModule extends ReactContextBaseJavaModule implements ReactiveJadeEventListener {
 
   private final static Logger logger = Logger.getLogger("com.reactivejade.AgentModule");
   
@@ -114,16 +115,24 @@ public class AgentModule extends ReactContextBaseJavaModule {
         this.agentController = this.agentContainer.createNewAgent(
           "verySimpleAgent",
           VerySimpleAgent.class.getName(),
-          new Object[] {}
+          new Object[] {
+            this
+          }
         );
 
         this.agentController.start();
 
-        successCallback.invoke(this.agentController.getName());
+        // successCallback.invoke(this.agentController.getName());
       } catch (Exception e) {
         errorCallback.invoke(e.getMessage());
       }
     }
+  }
+
+  public void reactiveJadeEventReceived(ReactiveJadeEvent event) {
+    getReactApplicationContext()
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+      .emit("log", event);
   }
 
   @ReactMethod

@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button} from 'react-native';
+import {Platform, StyleSheet, Text, TextInput, View, Button} from 'react-native';
 
 import AgentComponent from './AgentComponent';
 
@@ -29,13 +29,15 @@ export default class App extends Component<Props> {
     super(props);
 
     this.state = {
+      platformHost: '10.1.37.240',
       agent: null
     }
   }
 
   componentWillMount() {
-    DeviceEventEmitter.addListener('log', function(params) {
-      console.log(params.log);
+    DeviceEventEmitter.addListener('log', function() {
+      console.log('fede');
+      // console.log(params.log);
     });
 
     DeviceEventEmitter.addListener('testMsg', function(params) {
@@ -54,7 +56,7 @@ export default class App extends Component<Props> {
     console.log('startAgent');
 
     AgentComponent.start(
-      '192.168.0.6',
+      this.state.platformHost,
       '1099',
       (errorMessage) => {
         console.warn(errorMessage);
@@ -98,6 +100,10 @@ export default class App extends Component<Props> {
 
     return (
       <View style={styles.container}>
+        <TextInput
+          onChangeText={(platformHost) => this.setState({platformHost})}
+          value={this.state.platformHost}
+        />
         <Button
           onPress={this.startAgent}
           title="Start Agent"
