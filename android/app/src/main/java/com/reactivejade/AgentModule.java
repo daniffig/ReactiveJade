@@ -2,6 +2,8 @@
 
 package com.reactivejade;
 
+import reactivejade.agents.VerySimpleAgent;
+
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;

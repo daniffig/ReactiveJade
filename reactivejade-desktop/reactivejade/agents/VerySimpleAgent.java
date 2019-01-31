@@ -1,4 +1,4 @@
-package com.reactivejade;
+package reactivejade.agents;
 
 import jade.core.Agent;
 import jade.core.ContainerID;
