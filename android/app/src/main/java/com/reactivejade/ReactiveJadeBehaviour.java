@@ -1,6 +1,7 @@
 package com.reactivejade;
 
 import jade.core.Agent;
+import jade.core.ContainerID;
 import jade.core.Location;
 import jade.core.behaviours.TickerBehaviour;
 
@@ -23,15 +24,41 @@ public class ReactiveJadeBehaviour extends TickerBehaviour {
 
     agent.sendLog("ReactiveJadeBehaviour.onTick");
 
-    if (agent.currentContainerId < agent.platformContainers.size()) {
-      Location destinationContainer = agent.platformContainers.get(agent.currentContainerId);
+    ContainerID dest = new ContainerID();
+    dest.setName("Main-Container");
+    // dest.setAddress("192.168.0.6");
+    // dest.setPort("1099");
 
-      agent.sendLog("I want to move to " + destinationContainer.getName());
+    agent.sendLog(dest.toString());
 
-      agent.doMove(destinationContainer);
-    } else {
-      agent.sendLog("loop completed!");
-    }
+    // agent.sendLog("I want to move to " + destinationContainer.getName());
+    // agent.sendLog("I want to move to " + destinationContainer.getID());
+    // agent.sendLog("I want to move to " + destinationContainer.getAddress());
+    // agent.sendLog(dest.toString());
+
+    agent.doMove(dest);
+
+    return;
+
+    // agent.sendLog(String.valueOf(agent.getAgentState()));
+
+    // if (agent.currentContainerId < agent.platformContainers.size()) {
+    //   Location destinationContainer = agent.platformContainers.get(1);
+
+    //   ContainerID dest = new ContainerID();
+    //   dest.setName("Main-Container");
+    //   dest.setAddress("192.168.0.6");
+    //   dest.setPort("1099");
+
+    //   // agent.sendLog("I want to move to " + destinationContainer.getName());
+    //   // agent.sendLog("I want to move to " + destinationContainer.getID());
+    //   // agent.sendLog("I want to move to " + destinationContainer.getAddress());
+    //   // agent.sendLog(dest.toString());
+
+    //   agent.doMove(dest);
+    // } else {
+    //   agent.sendLog("loop completed!");
+    // }
 
     // WritableMap params = Arguments.createMap();
 

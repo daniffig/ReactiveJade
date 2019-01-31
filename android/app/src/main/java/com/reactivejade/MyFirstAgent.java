@@ -12,7 +12,9 @@ import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.Agent;
+import jade.core.ContainerID;
 import jade.core.Location;
+import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
 import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
@@ -34,6 +36,7 @@ public class MyFirstAgent extends Agent {
   private ReactContext reactContext;
 
   public Vector<Location> platformContainers;
+  // public Iterator platformContainers;
   public int currentContainerId;
   public Location sourceContainer;
 
@@ -49,24 +52,33 @@ public class MyFirstAgent extends Agent {
 
     // We add this to prevent "Unknown language fipa-sl" exception
     // as read on http://jade.tilab.com/pipermail/jade-develop/2007q4/011473.html
-    this.getContentManager().registerLanguage(new SLCodec());
+    this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
     this.getContentManager().registerOntology(MobilityOntology.getInstance());
 
     this.currentContainerId = 0;
     this.sourceContainer = this.here();
 
-    fetchPlatformContainers();
+    // fetchPlatformContainers();
 
-    sendLog(String.valueOf(platformContainers.size()));
+    // sendLog(String.valueOf(platformContainers.size()));
 
-    addBehaviour(new ReactiveJadeBehaviour(this, 2000L));
+    // addBehaviour(new ReactiveJadeBehaviour(this, 2000L));
+    // addBehaviour(new SimpleReactiveJadeBehaviour(this));
+
+    ContainerID destination = new ContainerID();
+    destination.setName("Main-Container");
+    // destination.setAddress("192.168.0.6:1099/JADE");
+
+    sendLog(destination.toString());
+
+    doMove(destination);
   }
 
-  @Override
-  protected void beforeMove() {
-    sendLog("beforeMove");
-    super.beforeMove();
-  }
+  // @Override
+  // protected void beforeMove() {
+  //   sendLog("beforeMove");
+  //   super.beforeMove();
+  // }
 
   @Override
   protected void afterMove() {
@@ -109,19 +121,20 @@ public class MyFirstAgent extends Agent {
   public void fetchPlatformContainers() {
     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 
-    request.setLanguage((new SLCodec()).getName());
-    request.setOntology(MobilityOntology.getInstance().getName());
+    request.setLanguage(FIPANames.ContentLanguage.FIPA_SL0);
+    request.setOntology(MobilityOntology.NAME);
+    request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 
-    Action action = new Action(this.getAMS(), new QueryPlatformLocationsAction());
+    Action action = new Action(getAMS(), new QueryPlatformLocationsAction());
 
     this.platformContainers = new Vector<Location>();
 
     try {
-      this.getContentManager().fillContent(request, action);
+      getContentManager().fillContent(request, action);
 
       request.addReceiver(action.getActor());
 
-      this.send(request);
+      send(request);
 
       MessageTemplate messageTemplate = MessageTemplate.and(
         MessageTemplate.MatchSender(getAMS()),

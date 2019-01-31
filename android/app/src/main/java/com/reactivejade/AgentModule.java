@@ -101,12 +101,18 @@ public class AgentModule extends ReactContextBaseJavaModule {
 
     if (this.agentController == null) {
       try {
+        // this.agentController = this.agentContainer.createNewAgent(
+        //   "myFirstAgent",
+        //   MyFirstAgent.class.getName(),
+        //   new Object[] {
+        //     getReactApplicationContext()
+        //   }
+        // );
+
         this.agentController = this.agentContainer.createNewAgent(
-          "myFirstAgent",
-          MyFirstAgent.class.getName(),
-          new Object[] {
-            getReactApplicationContext()
-          }
+          "verySimpleAgent",
+          VerySimpleAgent.class.getName(),
+          new Object[] {}
         );
 
         this.agentController.start();

@@ -54,7 +54,7 @@ export default class App extends Component<Props> {
     console.log('startAgent');
 
     AgentComponent.start(
-      '10.1.37.240',
+      '192.168.0.6',
       '1099',
       (errorMessage) => {
         console.warn(errorMessage);
