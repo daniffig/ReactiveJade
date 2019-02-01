@@ -15,6 +15,7 @@ import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+import java.lang.Runtime;
 import java.lang.StringBuffer;
 import java.util.Vector;
 import java.util.Iterator;
@@ -50,6 +51,10 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   protected void afterMove() {  
     sendGenericMessage("HardwareSnifferAgent.afterMove");
     notifyLocation();
+
+
+    sendGenericMessage("Free memory " + String.valueOf(java.lang.Runtime.getRuntime().freeMemory()));
+    sendGenericMessage("Total memory " + String.valueOf(java.lang.Runtime.getRuntime().totalMemory()));
 
     if (this.sourceContainer.equals(this.here())) {
       sendGenericMessage("I'm back at home!");
