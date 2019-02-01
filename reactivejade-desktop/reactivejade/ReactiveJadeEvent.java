@@ -1,16 +1,15 @@
 package reactivejade;
 
 import java.util.EventObject;
-import java.util.Map;
 
 public class ReactiveJadeEvent extends EventObject {
 
   private static final long serialVersionUID = 1L;
 
   private String eventName;
-  private Map<String, Object> params;
+  private ReactiveJadeMap params;
 
-  public ReactiveJadeEvent(Object source, String eventName, Map<String, Object> params) {
+  public ReactiveJadeEvent(Object source, String eventName, ReactiveJadeMap params) {
     super(source);
 
     this.eventName = eventName;
@@ -21,12 +20,11 @@ public class ReactiveJadeEvent extends EventObject {
     return this.eventName;
   }
 
-  public Map<String, Object> getParams() {
+  public ReactiveJadeMap getParams() {
     return this.params;
   }
 
   public Boolean hasParams() {
     return getParams() != null;
   }
-
 }

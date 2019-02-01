@@ -3,23 +3,10 @@ package reactivejade;
 import jade.core.Agent;
 import jade.core.ContainerID;
 
-import java.util.Observable;
 import java.util.Map;
 import java.util.HashMap;
 
-public class VerySimpleAgent extends Agent implements ReactiveJadeEventEmitter {
-
-  @Override
-  public void addListener(ReactiveJadeEventListener listener) {
-    listeners.add(listener);
-  }
-
-  @Override
-  public void fireEvent(ReactiveJadeEvent event) {
-    for (ReactiveJadeEventListener listener : listeners) {
-      listener.reactiveJadeEventReceived(event);
-    }
-  }
+public class VerySimpleAgent extends ReactiveJadeAgent {
 
   protected void setup() {
     Object[] args = getArguments();
@@ -39,10 +26,11 @@ public class VerySimpleAgent extends Agent implements ReactiveJadeEventEmitter {
   @Override
   protected void beforeMove() {
     System.out.println("Hello there!");
-    Map<String, Object> params = new HashMap<String, Object>();
+    ReactiveJadeMap params = new ReactiveJadeMap();
 
-    params.put("value1", 1);
-    params.put("value2", "a String");
+    params.putInt("value1", 1);
+    params.putString("value2", "a String");
+    params.putString("value3", "beforeMove");
 
     fireEvent(new ReactiveJadeEvent(this, "log", params));
   }
@@ -50,10 +38,11 @@ public class VerySimpleAgent extends Agent implements ReactiveJadeEventEmitter {
   @Override
   protected void afterMove() {
     System.out.println("Hello there!");
-    Map<String, Object> params = new HashMap<String, Object>();
+    ReactiveJadeMap params = new ReactiveJadeMap();
 
-    params.put("value1", 1);
-    params.put("value2", "a String");
+    params.putInt("value1", 1);
+    params.putString("value2", "a String");
+    params.putString("value3", "afterMove");
 
     fireEvent(new ReactiveJadeEvent(this, "log", params));
   }
