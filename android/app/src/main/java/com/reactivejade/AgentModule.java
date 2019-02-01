@@ -4,13 +4,16 @@ package com.reactivejade;
 
 import reactivejade.*;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -142,7 +145,32 @@ public class AgentModule extends ReactContextBaseJavaModule implements ReactiveJ
 
   @Override
   public void reactiveJadeEventReceived(ReactiveJadeEvent event) {
-    this.sendFakeEvent("event found!");
+
+    WritableMap params = Arguments.createMap();
+
+    // Mapping based on https://stackoverflow.com/questions/36289315/how-can-i-pass-a-hashmap-to-a-react-native-android-callback
+    if (event.hasParams()) {
+      for (Map.Entry<String, Object> entry : event.getParams().entrySet()) {
+        switch (entry.getValue().getClass().getName()) {
+          case "java.lang.Boolean":
+            params.putBoolean(entry.getKey(), (Boolean) entry.getValue());
+            break;
+          case "java.lang.Integer":
+            params.putInt(entry.getKey(), (Integer) entry.getValue());
+            break;
+          case "java.lang.Double":
+            params.putDouble(entry.getKey(), (Double) entry.getValue());
+            break;
+          case "java.lang.String":
+            params.putString(entry.getKey(), (String) entry.getValue());
+            break;
+        }
+      }
+    }
+
+    getReactApplicationContext()
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+      .emit(event.getEventName(), params);;
   }
 
   @ReactMethod
