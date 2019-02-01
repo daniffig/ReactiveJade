@@ -2,6 +2,12 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - ExeContainer",
+      "request": "launch",
+      "mainClass": "ExeContainer"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - ReactiveJadeDesktop",
       "request": "launch",
       "mainClass": "reactivejade.desktop.ReactiveJadeDesktop"
