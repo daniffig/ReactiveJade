@@ -30,8 +30,7 @@ export default class App extends Component<Props> {
 
     this.state = {
       // platformHost: '10.1.37.240',
-      platformHost: '192.168.0.6',
-      agent: null
+      platformHost: '192.168.0.6'
     }
   }
 

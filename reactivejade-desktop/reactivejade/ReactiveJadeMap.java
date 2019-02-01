@@ -10,19 +10,27 @@ public class ReactiveJadeMap extends HashMap<String, Object> {
     super();
   }
 
-  public void putBoolean(String key, Boolean value) {
+  public ReactiveJadeMap putBoolean(String key, Boolean value) {
     put(key, value);
+
+    return this;
   }
 
-  public void putInt(String key, Integer value) {
+  public ReactiveJadeMap putInt(String key, Integer value) {
     put(key, value);
+
+    return this;
   }
 
-  public void putDouble(String key, Double value) {
+  public ReactiveJadeMap putDouble(String key, Double value) {
     put(key, value);
+
+    return this;
   }
 
-  public void putString(String key, String value) {
+  public ReactiveJadeMap putString(String key, String value) {
     put(key, value);
+
+    return this;
   }
 }

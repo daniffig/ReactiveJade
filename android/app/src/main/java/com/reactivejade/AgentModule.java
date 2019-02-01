@@ -3,6 +3,7 @@
 package com.reactivejade;
 
 import reactivejade.*;
+import hardwaresniffer.*;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.NativeModule;
@@ -70,7 +71,7 @@ public class AgentModule extends ReactContextBaseJavaModule implements ReactiveJ
         this.agentContainer = null;
         this.agentController = null;
 
-        errorCallback.invoke("success!");
+        errorCallback.invoke("container successfully stopped");
       } catch (Exception e) {
         errorCallback.invoke(e.getMessage());
       }
@@ -116,8 +117,8 @@ public class AgentModule extends ReactContextBaseJavaModule implements ReactiveJ
         // );
 
         this.agentController = this.agentContainer.createNewAgent(
-          "verySimpleAgent",
-          VerySimpleAgent.class.getName(),
+          "hardwareSnifferAgent",
+          HardwareSnifferAgent.class.getName(),
           new Object[] {
             this
           }

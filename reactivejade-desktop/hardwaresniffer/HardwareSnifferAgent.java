@@ -16,6 +16,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.util.leap.Iterator;
 
+import java.lang.StringBuffer;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,7 +26,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   public Vector<Location> platformContainers;
   public int currentContainerId;
   public Location sourceContainer;
-
+  public StringBuffer collectedInfo = new StringBuffer();
 
   protected void setup() {
     super.setup();
@@ -38,6 +39,8 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     fetchPlatformContainers();
 
+    addBehaviour(new HardwareSnifferBehaviour(this, 5000L));
+
     // sendLog(String.valueOf(platformContainers.size()));
 
     // addBehaviour(new ReactiveJadeBehaviour(this, 2000L));
@@ -49,6 +52,29 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
 
     // doMove(destination);
+  }
+
+  @Override
+  protected void afterMove() {  
+    sendGenericMessage("HardwareSnifferAgent.afterMove");
+    notifyLocation();
+
+    if (this.currentContainerId < this.platformContainers.size()) {
+      this.currentContainerId = this.currentContainerId + 1;      
+    } else {
+
+    }
+  }
+
+  public void sendGenericMessage(String msg) {
+    sendLog(msg);
+    System.out.println(msg);
+  }
+
+  public void notifyLocation() {
+    String msg = "I'm in " + here().getName();
+
+    sendGenericMessage(msg);
   }
 
   private void fetchPlatformContainers() {
@@ -91,6 +117,15 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
       }
     } catch (Exception e) {
     }
+  }
+
+  private void sendLog(String log) {
+    fireEvent(new ReactiveJadeEvent(
+      this,
+      "log",
+      (new ReactiveJadeMap()).putString("message", log)
+    ));
+  }
 
 }
 
