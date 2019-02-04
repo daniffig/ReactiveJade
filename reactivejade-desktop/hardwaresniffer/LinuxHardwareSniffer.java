@@ -6,8 +6,10 @@ import java.lang.System;
 
 public class LinuxHardwareSniffer implements HardwareSniffer {
 
-  String proc_cpuinfo = "/proc/cpuinfo";
-  String proc_meminfo = "/proc/meminfo";
+  private static final String proc_cpuinfo = "/proc/cpuinfo";
+  private static final String proc_meminfo = "/proc/meminfo";
+  private static final Patter memtotal_regex = Pattern.compile("^MemTotal:(?:\\s*)(\\d+)\\skB$");
+  private static final Patter memfree_regex = Pattern.compile("^MemFree:(?:\\s*)(\\d+)\\skB$");
 
   @Override
   public long getTotalPhysicalMemorySize() {
