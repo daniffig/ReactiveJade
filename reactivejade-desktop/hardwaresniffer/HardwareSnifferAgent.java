@@ -22,9 +22,14 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class HardwareSnifferAgent extends ReactiveJadeAgent {
+import java.lang.Package;
+import java.lang.System;
 
-  // private final static Logger LOGGER = Logger.getLogger("hardwaresniffer.HardwareSnifferAgent");
+import java.io.File;
+
+import java.io.FileReader;
+
+public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   public Vector<Location> platformContainers;
   public int nextContainerIndex;
@@ -41,9 +46,38 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     this.platformContainers = this.fetchPlatformContainers();
     this.nextContainerIndex = 0;
 
+
+    sendGenericMessage(System.getProperty("java.vm.name"));
+
+    Package pkg = Package.getPackage("android.os");
+
+    if (pkg == null) {
+      sendGenericMessage("android.os not found");
+    } else {
+      sendGenericMessage("android.os found!");
+
+      // sendGenericMessage(String.valueOf(Class.forName("android.os.Build").SDK_INT));
+    }
+
+    File file = new File("/proc/loadavg");
+
+    if (file.exists()) {
+      sendGenericMessage("exists!");
+    } else {
+      sendGenericMessage("doesnt exist");
+    }
+
+    try {
+      FileReader fileReader = new FileReader("/proc/meminfo");
+
+      fileReader.read();
+    } catch (Exception e) {
+      sendGenericMessage(e.getMessage());
+    }
+
     addBehaviour(new HardwareSnifferBehaviour(
       this,
-      500L
+      2000L
     ));
   }
 
@@ -51,10 +85,6 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   protected void afterMove() {  
     sendGenericMessage("HardwareSnifferAgent.afterMove");
     notifyLocation();
-
-
-    sendGenericMessage("Free memory " + String.valueOf(java.lang.Runtime.getRuntime().freeMemory()));
-    sendGenericMessage("Total memory " + String.valueOf(java.lang.Runtime.getRuntime().totalMemory()));
 
     if (this.sourceContainer.equals(this.here())) {
       sendGenericMessage("I'm back at home!");

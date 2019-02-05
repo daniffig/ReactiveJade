@@ -25,56 +25,19 @@ public class HardwareSnifferBehaviour extends TickerBehaviour {
   protected void onTick() {
     hsAgent.sendGenericMessage("HardwareSnifferBehaviour.onTick");
     hsAgent.sendGenericMessage("I'm " + hsAgent.getName() + " and I'm on " + hsAgent.here().getName() + " at " + (new Date()));
-    // hsAgent.notifyLocation();
 
     hsAgent.sendGenericMessage(System.getProperty("os.name"));
 
     HardwareSniffer hs = new LinuxHardwareSniffer();
 
-    hsAgent.sendGenericMessage(String.valueOf(hs.getTotalPhysicalMemorySize()));
-    hsAgent.sendGenericMessage(String.valueOf(hs.getFreePhysicalMemorySize()));
+    hsAgent.sendGenericMessage("Total physical: " + String.valueOf(hs.getTotalPhysicalMemorySize()));
+    hsAgent.sendGenericMessage("Free physical: " + String.valueOf(hs.getFreePhysicalMemorySize()));
 
-    // HardwareSniffer hs = new HardwareSniffer.Linux();
+    hsAgent.sendGenericMessage("Total virtual: " + String.valueOf(hs.getTotalVirtualMemorySize()));
+    hsAgent.sendGenericMessage("Free virtual: " + String.valueOf(hs.getFreeVirtualMemorySize()));
 
-
-
-    // this.sniffHardware();
-    // this.sniffOperatingSystem();
+    hsAgent.sendGenericMessage("System load: " + String.valueOf(hs.getSystemLoadAverage()));
 
     hsAgent.doMove(hsAgent.nextLocation());
-  }
-
-  private void sniffHardware() {
-    String meminfo = "/proc/meminfo";
-
-    try {
-      FileReader localFileReader = new FileReader(meminfo);
-      BufferedReader localBufferedReader = new BufferedReader(localFileReader, 8192);
-
-      hsAgent.sendGenericMessage(localBufferedReader.readLine());
-
-      localBufferedReader.close();
-    } catch (Exception e) {
-      hsAgent.sendGenericMessage(e.getMessage());
-    }
-  }
-
-  private void sniffOperatingSystem() {
-    // hsAgent.sendGenericMessage("HardwareSnifferBehaviour.sniffOperatingSystem1");
-
-    // try {
-    //   OperatingSystemMXBean OS = ManagementFactory.getOperatingSystemMXBean();
-    //   Class.forName("OperatingSystemMXBean");
-    //   // Class.forName("ManagementFactory");
-
-    //   hsAgent.sendGenericMessage("Existe!");
-
-    // } catch (Exception e) {
-    //   hsAgent.sendGenericMessage(e.getMessage());
-    // }
-
-    // hsAgent.sendGenericMessage("HardwareSnifferBehaviour.sniffOperatingSystem2");
-    // hsAgent.sendGenericMessage(String.valueOf(OS.getSystemLoadAverage()));
-    // hsAgent.sendGenericMessage(String.valueOf(OS.getAvailableProcessors()));
   }
 }
