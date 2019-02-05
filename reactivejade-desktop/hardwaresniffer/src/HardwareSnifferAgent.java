@@ -48,16 +48,6 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     sendGenericMessage(System.getProperty("java.vm.name"));
 
-    HardwareSniffer hs = HardwareSnifferManager.getManager().getSniffer();
-
-    sendGenericMessage("Total physical: " + String.valueOf(hs.getTotalPhysicalMemorySize()));
-    sendGenericMessage("Free physical: " + String.valueOf(hs.getFreePhysicalMemorySize()));
-
-    sendGenericMessage("Total virtual: " + String.valueOf(hs.getTotalVirtualMemorySize()));
-    sendGenericMessage("Free virtual: " + String.valueOf(hs.getFreeVirtualMemorySize()));
-
-    sendGenericMessage("System load: " + String.valueOf(hs.getSystemLoadAverage()));
-
     addBehaviour(new HardwareSnifferBehaviour(
       this,
       2000L

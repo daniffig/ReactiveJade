@@ -30,6 +30,7 @@ export default class App extends Component<Props> {
 
     this.state = {
       platformHost: '10.1.37.240',
+      containerName: DeviceInfo.getDeviceName()
       // platformHost: '192.168.0.6'
     }
   }
@@ -49,6 +50,10 @@ export default class App extends Component<Props> {
     DeviceEventEmitter.addListener('getContainers', function(params) {
       console.log(params);
     })
+  }
+
+  startContainer = () => {
+    console.log('startContainer');
   }
 
   startAgent = () => {
@@ -102,6 +107,14 @@ export default class App extends Component<Props> {
         <TextInput
           onChangeText={(platformHost) => this.setState({platformHost})}
           value={this.state.platformHost}
+        />
+        <TextInput
+          onChangeText={(containerName) => this.setState({containerName})}
+          value={this.state.containerName}
+        />
+        <Button
+          onPress={this.startContainer}
+          title="Start Container"
         />
         <Button
           onPress={this.startAgent}
