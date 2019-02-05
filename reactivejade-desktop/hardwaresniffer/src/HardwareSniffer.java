@@ -4,10 +4,6 @@ import java.lang.Runtime;
 
 public abstract class HardwareSniffer {
 
-  // Para implementar un constructor genérico se podría utilizar
-  // java.lang.Runtime.getRuntime.getProperty("os.name")
-  // y a partir del resultado devolver la instancia correcta.
-
   public abstract double getSystemLoadAverage();
   public abstract long getTotalPhysicalMemorySize();
   public abstract long getFreePhysicalMemorySize();

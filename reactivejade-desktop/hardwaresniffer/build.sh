@@ -1,0 +1,7 @@
+SCRIPT_FILE=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname "$SCRIPT_FILE")
+LIB_PATH="$SCRIPT_PATH/../lib"
+JADE_JAR="$LIB_PATH/jade.jar"
+REACTIVEJADE_JAR="$LIB_PATH/ReactiveJade.jar"
+
+echo $REACTIVEJADE_JAR

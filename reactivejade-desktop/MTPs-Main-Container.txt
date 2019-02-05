@@ -1,1 +1,1 @@
-http://j:7778/acc
+http://daniffig-slyt:7778/acc

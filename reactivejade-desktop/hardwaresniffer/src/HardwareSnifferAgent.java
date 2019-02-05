@@ -46,34 +46,17 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     this.platformContainers = this.fetchPlatformContainers();
     this.nextContainerIndex = 0;
 
-
     sendGenericMessage(System.getProperty("java.vm.name"));
 
-    Package pkg = Package.getPackage("android.os");
+    HardwareSniffer hs = HardwareSnifferManager.getManager().getSniffer();
 
-    if (pkg == null) {
-      sendGenericMessage("android.os not found");
-    } else {
-      sendGenericMessage("android.os found!");
+    sendGenericMessage("Total physical: " + String.valueOf(hs.getTotalPhysicalMemorySize()));
+    sendGenericMessage("Free physical: " + String.valueOf(hs.getFreePhysicalMemorySize()));
 
-      // sendGenericMessage(String.valueOf(Class.forName("android.os.Build").SDK_INT));
-    }
+    sendGenericMessage("Total virtual: " + String.valueOf(hs.getTotalVirtualMemorySize()));
+    sendGenericMessage("Free virtual: " + String.valueOf(hs.getFreeVirtualMemorySize()));
 
-    File file = new File("/proc/loadavg");
-
-    if (file.exists()) {
-      sendGenericMessage("exists!");
-    } else {
-      sendGenericMessage("doesnt exist");
-    }
-
-    try {
-      FileReader fileReader = new FileReader("/proc/meminfo");
-
-      fileReader.read();
-    } catch (Exception e) {
-      sendGenericMessage(e.getMessage());
-    }
+    sendGenericMessage("System load: " + String.valueOf(hs.getSystemLoadAverage()));
 
     addBehaviour(new HardwareSnifferBehaviour(
       this,

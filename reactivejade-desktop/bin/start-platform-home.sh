@@ -1,0 +1,1 @@
+java -cp lib/jade.jar:lib/ReactiveJade.jar jade.Boot -gui
