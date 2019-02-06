@@ -7,13 +7,21 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, TextInput, View, Button} from 'react-native';
-
-import AgentComponent from './AgentComponent';
+import {
+  Button,
+  DeviceEventEmitter,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  ToastAndroid,
+  View,
+} from 'react-native';
 
 import DeviceInfo from 'react-native-device-info';
 
-import { DeviceEventEmitter } from 'react-native';
+import AgentComponent from './AgentComponent';
+import ReactiveJade from './ReactiveJade';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -29,9 +37,12 @@ export default class App extends Component<Props> {
     super(props);
 
     this.state = {
-      platformHost: '10.1.37.240',
-      containerName: DeviceInfo.getDeviceName()
-      // platformHost: '192.168.0.6'
+      // platformHost: '10.1.37.240',
+      platformHost: '192.168.0.6',
+      platformPost: '1099',
+      containerName: DeviceInfo.getDeviceName(),
+      assignedContainerName: null,
+      assignedAgentName: null
     }
   }
 
@@ -53,42 +64,108 @@ export default class App extends Component<Props> {
   }
 
   startContainer = () => {
-    console.log('startContainer');
+    console.log('App.js > startContainer');
+
+    var _this = this;
+    
+    ReactiveJade.startContainer(
+      this.state.containerName,
+      this.state.platformHost,
+      this.state.platformPort,
+      (params) => {
+        console.log('App.js > startContainer > success');
+
+        _this.setState({ assignedContainerName: params.assignedContainerName });
+
+        console.log(params.message);
+
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
+      },
+      (params) => {
+        console.log('App.js > startContainer > error');
+
+        console.log(params.message);
+        
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
+      }
+    );
+  }
+
+  stopContainer = () => {
+    console.log('App.js > stopContainer');
+
+    var _this = this;
+
+    ReactiveJade.stopContainer(
+      (params) => {
+        console.log('App.js > stopContainer > success');
+
+        _this.setState({ assignedContainerName: null });
+
+        console.log(params.message);
+        
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
+      },
+      (params) => {
+        console.log('App.js > stopContainer > error');
+
+        console.log(params.message);
+        
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
+      }
+    );
   }
 
   startAgent = () => {
-    console.log('startAgent');
+    console.log('App.js > startAgent');
 
-    AgentComponent.start(
-      this.state.platformHost,
-      '1099',
-      (errorMessage) => {
-        console.warn(errorMessage);
+    var _this = this;
+
+    ReactiveJade.startAgent(
+      "HardwareSnifferAgent",
+      (params) => {
+        console.log('App.js > startAgent > success');
+
+        _this.setState({ assignedAgentName: params.assignedAgentName });
+
+        console.log(params.message);
+        
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
       },
-      (agentName) => {
-        console.log("Agent successfully created with name " + agentName);
+      (params) => {
+        console.log('App.js > startAgent > error');
+
+        console.log(params.message);
+        
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
       }
-    )
+    );
   }
 
   stopAgent = () => {
-    console.log('stopAgent');
+    console.log('App.js > stopAgent');
 
-    AgentComponent.stop(
-      'ag',
-      (msg) => {
-        console.log(msg);
+    var _this = this;
+
+    ReactiveJade.stopAgent(
+      (params) => {
+        console.log('App.js > stopAgent > success');
+
+        _this.setState({ assignedAgentName: null });
+
+        console.log(params.message);
+        
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
       },
-      (msg) => {
-        console.log(msg);
+      (params) => {
+        console.log('App.js > stopAgent > error');
+
+        console.log(params.message);
+        
+        ToastAndroid.show(params.message, ToastAndroid.SHORT);
+
       }
-    )
-
-    // if (this.state.agent != null) {
-    //   console.log(this.state.agent);
-    // }
-
-    console.log(this.state);
+    );
   }
 
   getContainers = () => {
@@ -102,6 +179,19 @@ export default class App extends Component<Props> {
   render() {
     carrierName = DeviceInfo.getCarrier();
 
+    if (this.state.assignedContainerName == null) {
+      containerButton = <Button onPress={this.startContainer} title="Start Container" />;
+      agentButton = null;
+    } else {
+      containerButton = <Button onPress={this.stopContainer}  title="Stop Container" />;
+
+      if (this.state.assignedAgentName == null) {
+        agentButton = <Button onPress={this.startAgent} title="Start Agent" />
+      } else {
+        agentButton = <Button onPress={this.stopAgent} title="Stop Agent" />
+      }
+    }
+
     return (
       <View style={styles.container}>
         <TextInput
@@ -112,18 +202,8 @@ export default class App extends Component<Props> {
           onChangeText={(containerName) => this.setState({containerName})}
           value={this.state.containerName}
         />
-        <Button
-          onPress={this.startContainer}
-          title="Start Container"
-        />
-        <Button
-          onPress={this.startAgent}
-          title="Start Agent"
-        />
-        <Button
-          onPress={this.stopAgent}
-          title="Stop Agent"
-        />
+        {containerButton}
+        {agentButton}
         <Button
           onPress={this.getContainers}
           title="getContainers"
