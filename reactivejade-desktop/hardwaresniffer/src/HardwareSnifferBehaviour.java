@@ -10,33 +10,19 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.util.Logger;
 
-// http://jade.tilab.com/doc/api/jade/core/behaviours/TickerBehaviour.html
 public class HardwareSnifferBehaviour extends CyclicBehaviour {
 
   private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
-  // private HardwareSnifferAgent hsAgent;
   private List<Location> journey;
 
   public HardwareSnifferBehaviour(HardwareSnifferAgent agent, List<Location> journey) {
     super(agent);
 
-    logger.log(Level.INFO, "HardwareSnifferBehaviour.constructor");
-
     this.journey = journey;
-    // super(agent, period);
-
-    // this.hsAgent = (HardwareSnifferAgent) agent;
   }
 
-  // public HardwareSnifferBehaviour(Agent agent, long period) {
-  //   super(agent, period);
-
-  //   this.hsAgent = (HardwareSnifferAgent) agent;
-  // }
-
   @Override
-  // protected void onTick() {
   public void action() {
     logger.log(Level.INFO, "HardwareSnifferBehaviour.action");
     logger.log(Level.INFO, "HardwareSnifferBehaviour.action > journey.size=" + String.valueOf(journey.size()));
@@ -45,10 +31,17 @@ public class HardwareSnifferBehaviour extends CyclicBehaviour {
 
     if (hasNextLocation()) {
       logger.log(Level.INFO, "HardwareSnifferBehaviour.action > hasNextLocation");
-      
+
       agent.doMove(nextLocation());
     } else {
       agent.removeBehaviour(this);
+
+      if (agent.here().equals(agent.sourceContainer)) {
+        logger.log(Level.INFO, "HardwareSnifferBehaviour.action > noMoves");
+
+      } else {
+        agent.doMove(agent.sourceContainer);
+      }
     }
 
     // System.out.println(String.valueOf(journey.hasNext()));
