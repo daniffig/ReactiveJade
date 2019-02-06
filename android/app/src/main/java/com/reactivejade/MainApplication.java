@@ -9,9 +9,6 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
-import com.reactivejade.AgentPackage;
-import com.reactivejade.CustomToastPackage; // <-- Add this line with your package name.
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,9 +25,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
           new RNDeviceInfo(),
-          new ReactiveJadePackage(),
-          new AgentPackage(),
-          new CustomToastPackage() // <-- Add this line with your package name.
+          new ReactiveJadePackage()
       );
     }
 

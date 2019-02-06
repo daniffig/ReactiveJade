@@ -1,35 +1,32 @@
 package hardwaresniffer;
 
-import reactivejade.*;
+import java.lang.StringBuffer;
+import java.util.Vector;
+import java.util.Iterator;
+import java.util.logging.Level;
 
 import jade.content.ContentElement;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.Agent;
-import jade.core.ContainerID;
 import jade.core.Location;
 import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
 import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.util.Logger;
 
-import java.lang.Runtime;
-import java.lang.StringBuffer;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import reactivejade.ReactiveJadeAgent;
+import reactivejade.ReactiveJadeEvent;
+import reactivejade.ReactiveJadeMap;
 
-import java.lang.Package;
-import java.lang.System;
-
-import java.io.File;
-
-import java.io.FileReader;
+import hardwaresniffer.HardwareSnifferBehaviour;
 
 public class HardwareSnifferAgent extends ReactiveJadeAgent {
+
+  private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
   public Vector<Location> platformContainers;
   public int nextContainerIndex;
@@ -39,14 +36,14 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   protected void setup() {
     super.setup();
 
+    logInfo("HardwareSnifferAgent.setup");
+
     this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
     this.getContentManager().registerOntology(MobilityOntology.getInstance());
 
     this.sourceContainer = this.here();
     this.platformContainers = this.fetchPlatformContainers();
     this.nextContainerIndex = 0;
-
-    sendGenericMessage(System.getProperty("java.vm.name"));
 
     addBehaviour(new HardwareSnifferBehaviour(
       this,
@@ -56,11 +53,11 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   @Override
   protected void afterMove() {  
-    sendGenericMessage("HardwareSnifferAgent.afterMove");
-    notifyLocation();
+    // sendGenericMessage("HardwareSnifferAgent.afterMove");
+    // notifyLocation();
 
     if (this.sourceContainer.equals(this.here())) {
-      sendGenericMessage("I'm back at home!");
+      // sendGenericMessage("I'm back at home!");
 
       this.nextContainerIndex = 0;
     } else {
@@ -68,20 +65,24 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     }
   }
 
-  public void sendGenericMessage(String msg) {
-    sendLog(msg);
-    System.out.println(msg);
-    // LOGGER.log(Level.INFO, msg);
+  public void logInfo(String log) {
+    logger.log(Level.INFO, log);
+
+    notifyReactiveJadeEvent(new ReactiveJadeEvent(
+      this,
+      "log",
+      (new ReactiveJadeMap()).putString("message", log)
+    ));
   }
 
   public void notifyLocation() {
     String msg = "I'm in " + here().getName();
 
-    sendGenericMessage(msg);
+    logInfo(msg);
   }
 
   public Location nextLocation() {
-    this.sendGenericMessage("HardwareSnifferAgent.nextLocation");
+    logInfo("HardwareSnifferAgent.nextLocation");
 
     Location nextLocation = null;
 
@@ -137,19 +138,10 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
       return platformContainers;
     } catch (Exception e) {
-      sendGenericMessage(e.getMessage());
+      logInfo(e.getMessage());
 
       return null;
     }
   }
-
-  private void sendLog(String log) {
-    fireEvent(new ReactiveJadeEvent(
-      this,
-      "log",
-      (new ReactiveJadeMap()).putString("message", log)
-    ));
-  }
-
 }
 
