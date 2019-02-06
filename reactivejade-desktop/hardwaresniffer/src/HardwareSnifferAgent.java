@@ -1,8 +1,10 @@
 package hardwaresniffer;
 
 import java.lang.StringBuffer;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 
 import jade.content.ContentElement;
@@ -28,10 +30,14 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
-  public Vector<Location> platformContainers;
+  // public Vector<Location> platformContainers;
+  public List<Location> platformContainers;
   public int nextContainerIndex;
   public Location sourceContainer;
-  public StringBuffer collectedInfo = new StringBuffer();
+
+  public List<HardwareSnifferReport> reportList;
+
+  // public StringBuffer collectedInfo = new StringBuffer();
 
   protected void setup() {
     super.setup();
@@ -45,10 +51,12 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     this.platformContainers = this.fetchPlatformContainers();
     this.nextContainerIndex = 0;
 
-    addBehaviour(new HardwareSnifferBehaviour(
-      this,
-      2000L
-    ));
+    this.reportList = new ArrayList<HardwareSnifferReport>();
+
+    addBehaviour(new HardwareSnifferBehaviour(this, platformContainers));
+    //   this,
+    //   2000L
+    // ));
   }
 
   @Override
@@ -97,7 +105,8 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     return nextLocation;
   }
 
-  private Vector<Location> fetchPlatformContainers() {
+  // private Vector<Location> fetchPlatformContainers() {
+  private List<Location> fetchPlatformContainers() {
     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 
     request.setLanguage(FIPANames.ContentLanguage.FIPA_SL0);
@@ -126,7 +135,8 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
       Iterator iterator = result.getItems().iterator();
 
-      Vector<Location> platformContainers = new Vector<Location>();
+      List<Location> platformContainers = new ArrayList<Location>();
+      // Vector<Location> platformContainers = new Vector<Location>();
 
       while (iterator.hasNext()) {
         Location location = (Location) iterator.next();

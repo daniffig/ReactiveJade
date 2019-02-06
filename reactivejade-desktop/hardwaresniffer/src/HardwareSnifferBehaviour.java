@@ -1,28 +1,62 @@
 package hardwaresniffer;
 
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+
 import jade.core.Agent;
 import jade.core.Location;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
-
-import java.util.Date;
+import jade.util.Logger;
 
 // http://jade.tilab.com/doc/api/jade/core/behaviours/TickerBehaviour.html
-public class HardwareSnifferBehaviour extends TickerBehaviour {
+public class HardwareSnifferBehaviour extends CyclicBehaviour {
 
-  private HardwareSnifferAgent hsAgent;
+  private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
-  public HardwareSnifferBehaviour(Agent agent, long period) {
-    super(agent, period);
+  // private HardwareSnifferAgent hsAgent;
+  private List<Location> journey;
 
-    this.hsAgent = (HardwareSnifferAgent) agent;
+  public HardwareSnifferBehaviour(HardwareSnifferAgent agent, List<Location> journey) {
+    super(agent);
+
+    logger.log(Level.INFO, "HardwareSnifferBehaviour.constructor");
+
+    this.journey = journey;
+    // super(agent, period);
+
+    // this.hsAgent = (HardwareSnifferAgent) agent;
   }
 
+  // public HardwareSnifferBehaviour(Agent agent, long period) {
+  //   super(agent, period);
+
+  //   this.hsAgent = (HardwareSnifferAgent) agent;
+  // }
+
   @Override
-  protected void onTick() {
+  // protected void onTick() {
+  public void action() {
+    logger.log(Level.INFO, "HardwareSnifferBehaviour.action");
+    logger.log(Level.INFO, "HardwareSnifferBehaviour.action > journey.size=" + String.valueOf(journey.size()));
+
+    HardwareSnifferAgent agent = (HardwareSnifferAgent) getAgent();
+
+    if (hasNextLocation()) {
+      logger.log(Level.INFO, "HardwareSnifferBehaviour.action > hasNextLocation");
+      
+      agent.doMove(nextLocation());
+    } else {
+      agent.removeBehaviour(this);
+    }
+
+    // System.out.println(String.valueOf(journey.hasNext()));
     // hsAgent.sendGenericMessage("HardwareSnifferBehaviour.onTick");
     // hsAgent.sendGenericMessage("I'm " + hsAgent.getName() + " and I'm on " + hsAgent.here().getName() + " at " + (new Date()));
 
-    HardwareSniffer hs = HardwareSnifferManager.getManager().getSniffer();
+
+    // HardwareSniffer hs = HardwareSnifferManager.getManager().getSniffer();
 
     // hsAgent.sendGenericMessage("Total physical: " + String.valueOf(hs.getTotalPhysicalMemorySize()));
     // hsAgent.sendGenericMessage("Free physical: " + String.valueOf(hs.getFreePhysicalMemorySize()));
@@ -32,6 +66,14 @@ public class HardwareSnifferBehaviour extends TickerBehaviour {
 
     // hsAgent.sendGenericMessage("System load: " + String.valueOf(hs.getSystemLoadAverage()));
 
-    hsAgent.doMove(hsAgent.nextLocation());
+    // agent.doMove(agent.nextLocation());
+  }
+
+  private boolean hasNextLocation() {
+    return journey.size() > 0;
+  }
+
+  private Location nextLocation() {
+    return journey.remove(0);
   }
 }
