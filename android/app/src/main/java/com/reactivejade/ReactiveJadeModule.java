@@ -2,6 +2,7 @@
 
 package com.reactivejade;
 
+import java.util.List;
 import java.util.UUID;
 
 // https://developer.android.com/reference/android/util/Log.html
@@ -34,6 +35,7 @@ import reactivejade.ReactiveJadeSubscribable;
 import reactivejade.ReactiveJadeSubscriptionService;
 
 import hardwaresniffer.HardwareSnifferAgent;
+import hardwaresniffer.HardwareSnifferReport;
 
 public class ReactiveJadeModule extends ReactContextBaseJavaModule implements ReactiveJadeSubscribable {
 
@@ -209,13 +211,13 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
   private void notifyReportList(ReactiveJadeMap reactiveJadeMap) {
     WritableMap params = Arguments.createMap();
 
-    params.putString("containerName", reactiveJadeMap.get("containerName"));
-    params.putString("elapsedTime", reactiveJadeMap.get("elapsedTime"));
+    params.putString("containerName", (String) reactiveJadeMap.get("containerName"));
+    params.putString("elapsedTime", (String) reactiveJadeMap.get("elapsedTime"));
 
     WritableArray array = Arguments.createArray();
 
-    for (HardwareSnifferReport report : (List) reactiveJadeMap.get("reportList")) {
-      array.pushMap(ReactiveJadeMapConverter.toWritableMap(report));
+    for (HardwareSnifferReport report : ((List<HardwareSnifferReport>) reactiveJadeMap.get("reportList"))) {
+      array.pushMap(ReactiveJadeMapConverter.toWritableMap(report.toMap()));
     }
 
     params.putArray("reportList", array);
