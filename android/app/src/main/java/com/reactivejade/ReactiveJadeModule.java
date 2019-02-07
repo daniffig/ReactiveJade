@@ -225,7 +225,8 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
   private void notifyReportList(ReactiveJadeMap reactiveJadeMap) {
     WritableMap params = Arguments.createMap();
 
-    params.putString("containerName", (String) reactiveJadeMap.get("containerName"));
+    params.putString("agentName", (String) reactiveJadeMap.get("agentName"));
+    params.putString("sentAt", (String) reactiveJadeMap.get("sentAt"));
     params.putString("elapsedTime", (String) reactiveJadeMap.get("elapsedTime"));
 
     WritableArray array = Arguments.createArray();

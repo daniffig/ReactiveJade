@@ -80,12 +80,13 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
       this,
       "reportList",
       (new ReactiveJadeMap())
-        .putString("containerName", getName())
+        .putString("agentName", getName())
+        .putString("sentAt", journeyEndedAt.toString())
         .putString("elapsedTime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(journeyEndedAt.getTime() - journeyStartedAt.getTime())))
         .putObject("reportList", reportList)
     ));
 
-    logInfo("I'm " + getName() + " and I'm ending my last new adventure at " + (new Date()).toString());
+    logInfo("I'm " + getName() + " and I'm ending my last adventure at " + (new Date()).toString());
 
     addBehaviour(new WakerBehaviour(this, 5000L) {
 

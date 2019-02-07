@@ -53,16 +53,23 @@ export default class App extends Component<Props> {
       containerName: DeviceInfo.getDeviceName(),
       assignedContainerName: null,
       assignedAgentName: null,
-      containerConfigurationIsVisible: false
+      containerConfigurationIsVisible: false,
+      hardwareSnifferReports: []
     }
   }
 
   componentWillMount() {
+    var _this = this;
+
     DeviceEventEmitter.addListener('log', function(params) {
       console.log(params);
     });
 
     DeviceEventEmitter.addListener('reportList', function(params) {
+      _this.setState({
+        hardwareSnifferReports: [params, ..._this.state.hardwareSnifferReports]
+      });
+
       console.log(params);
     });
   }
@@ -218,7 +225,12 @@ export default class App extends Component<Props> {
             ></Button>
           }
         />
-        <Overlay isVisible={this.state.containerConfigurationIsVisible}>
+        <Overlay
+          isVisible={this.state.containerConfigurationIsVisible}
+          overlayStyle={{
+            height: 'auto'
+          }}  
+        >
           <View>
           <Text>Container Configuration</Text>
           <Input
@@ -239,74 +251,68 @@ export default class App extends Component<Props> {
           <Button
             title="Close"
             onPress={this.toggleContainerConfiguration}
+            containerStyle={{
+              marginTop: 10
+            }}
           ></Button>
           </View>
         </Overlay>
         {containerButton}
         {agentButton}
+        {/* <Card
+          title="Report for {aString}"
+          titleStyle={{
+            textAlign: 'left'
+          }}
+        > */}
+          {/* <ScrollView>
+            <ListItem
+              title="reportDate"
+              subtitle="{aDate}"
+            />
+            <ListItem
+              title="totalPhysicalMemory"
+              subtitle="{aString}"
+            />
+            <ListItem
+              title="freePhysicalMemory"
+              subtitle="{aString}"
+            />
+            <ListItem
+              title="totalVirtualMemory"
+              subtitle="{aString}"
+            />
+            <ListItem
+              title="freeVirtualMemory"
+              subtitle="{aString}"
+            />
+            <ListItem
+              title="systemLoadAverage"
+              subtitle="{aString}"
+            />
+            <ListItem
+              title="operatingSystemName"
+              subtitle="{aString}"
+            />
+            <ListItem
+              title="virtualMachineName"
+              subtitle="{aString}"
+            />
+          </ScrollView>
+
+        </Card> */}
         <Text h4>List of Agents</Text>
         <ScrollView>
-        <ListItem
-          rightElement={<Icon name="menu" color="black" />}
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
-        <ListItem
-          key="0"
-          title="ListItem"
-          subtitle="listItem"
-        />
+          {
+            this.state.hardwareSnifferReports.map((l, i) => (
+              <ListItem
+                rightElement={<Icon name="menu" color="black" />}
+                key={i}
+                title={l.agentName}
+                subtitle={l.sentAt}
+              />
+            ))
+          }
         </ScrollView>
       </View>
     );
