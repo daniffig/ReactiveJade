@@ -33,4 +33,10 @@ public class ReactiveJadeMap extends HashMap<String, Object> {
 
     return this;
   }
+
+  public ReactiveJadeMap putObject(String key, Object value) {
+    put(key, value);
+
+    return this;
+  }
 }

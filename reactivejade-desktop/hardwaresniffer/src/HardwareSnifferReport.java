@@ -3,6 +3,8 @@ package hardwaresniffer;
 import java.io.Serializable;
 import java.util.Date;
 
+import reactivejade.ReactiveJadeMap;
+
 public class HardwareSnifferReport implements Serializable {
 
   static final long serialVersionUID = 1L;
@@ -71,5 +73,18 @@ public class HardwareSnifferReport implements Serializable {
 
   public String getVirtualMachineName() {
     return virtualMachineName;
+  }
+
+  public ReactiveJadeMap toMap() {
+    return (new ReactiveJadeMap())
+      .putString("reportDate", reportDate.toString())
+      .putString("containerName", containerName)
+      .putDouble("totalPhysicalMemory", totalPhysicalMemory)
+      .putDouble("freePhysicalMemory", freePhysicalMemory)
+      .putDouble("totalVirtualMemory", totalVirtualMemory)
+      .putDouble("freeVirtualMemory", freeVirtualMemory)
+      .putDouble("systemLoadAverage", systemLoadAverage)
+      .putString("operatingSystemName", operatingSystemName)
+      .putString("virtualMachineName", virtualMachineName);      
   }
 }

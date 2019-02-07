@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
@@ -27,7 +28,8 @@ import jade.wrapper.ControllerException;
 import jade.wrapper.StaleProxyException;
 
 import reactivejade.ReactiveJadeEvent;
-import reactivejade.ReactiveJadeEventParser;
+import reactivejade.ReactiveJadeMap;
+import reactivejade.ReactiveJadeMapConverter;
 import reactivejade.ReactiveJadeSubscribable;
 import reactivejade.ReactiveJadeSubscriptionService;
 
@@ -188,8 +190,38 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
 
   @Override
   public void receiveReactiveJadeEvent(ReactiveJadeEvent event) {
+    switch (event.getEventName()) {
+      case "log":
+        notifyJSModule(event);
+        break;
+      case "reportList":
+        notifyReportList(event.getParams());
+        break;
+    }
+  }
+
+  private void notifyJSModule(ReactiveJadeEvent event) {
     getReactApplicationContext()
       .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-      .emit(event.getEventName(), ReactiveJadeEventParser.parseParams(event));
+      .emit(event.getEventName(), ReactiveJadeMapConverter.toWritableMap(event.getParams()));
+  }
+
+  private void notifyReportList(ReactiveJadeMap reactiveJadeMap) {
+    WritableMap params = Arguments.createMap();
+
+    params.putString("containerName", reactiveJadeMap.get("containerName"));
+    params.putString("elapsedTime", reactiveJadeMap.get("elapsedTime"));
+
+    WritableArray array = Arguments.createArray();
+
+    for (HardwareSnifferReport report : (List) reactiveJadeMap.get("reportList")) {
+      array.pushMap(ReactiveJadeMapConverter.toWritableMap(report));
+    }
+
+    params.putArray("reportList", array);
+
+    getReactApplicationContext()
+      .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+      .emit("reportList", params);
   }
 }

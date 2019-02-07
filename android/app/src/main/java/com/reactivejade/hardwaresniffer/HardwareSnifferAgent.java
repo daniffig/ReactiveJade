@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import jade.content.ContentElement;
@@ -32,6 +33,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
+  public Date journeyStartedAt;
   public List<Location> platformContainers;
   public Location sourceContainer;
 
@@ -44,7 +46,9 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   }
 
   private void startJourney() {
-    logInfo("I'm " + getName() + " and I'm starting a new adventure at " + (new Date()).toString());
+    this.journeyStartedAt = new Date();
+
+    logInfo("I'm " + getName() + " and I'm starting a new adventure at " + journeyStartedAt.toString());
 
     getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
     getContentManager().registerOntology(MobilityOntology.getInstance());
@@ -69,6 +73,17 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   public void endJourney() {
     reportList.add(buildHardwareSnifferReport());
+
+    Date journeyEndedAt = new Date();
+
+    notifyReactiveJadeEvent(new ReactiveJadeEvent(
+      this,
+      "reportList",
+      (new ReactiveJadeMap())
+        .putString("containerName", getName())
+        .putString("elapsedTime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(journeyEndedAt.getTime() - journeyStartedAt.getTime())))
+        .putObject("reportList", reportList)
+    ));
 
     logInfo("I'm " + getName() + " and I'm ending my last new adventure at " + (new Date()).toString());
 
