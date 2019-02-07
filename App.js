@@ -36,8 +36,8 @@ export default class App extends Component<Props> {
     super(props);
 
     this.state = {
-      platformHost: '10.1.37.240',
-      // platformHost: '192.168.0.6',
+      // platformHost: '10.1.37.240',
+      platformHost: '192.168.0.6',
       platformPost: '1099',
       containerName: DeviceInfo.getDeviceName(),
       assignedContainerName: null,
@@ -47,20 +47,8 @@ export default class App extends Component<Props> {
 
   componentWillMount() {
     DeviceEventEmitter.addListener('log', function(params) {
-      console.warn("log");
       console.log(params);
     });
-
-    DeviceEventEmitter.addListener('testMsg', function(params) {
-      console.log(params);
-      // console.log(params.freeMemory);
-      // console.log(params.maxMemory);
-      console.log('componentWillMount');
-    });
-
-    DeviceEventEmitter.addListener('getContainers', function(params) {
-      console.log(params);
-    })
   }
 
   startContainer = () => {
@@ -122,7 +110,7 @@ export default class App extends Component<Props> {
     var _this = this;
 
     ReactiveJade.startAgent(
-      "HardwareSnifferAgent",
+      _this.state.containerName,
       (params) => {
         console.log('App.js > startAgent > success');
 

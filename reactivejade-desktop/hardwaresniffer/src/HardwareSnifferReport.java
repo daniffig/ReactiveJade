@@ -1,25 +1,28 @@
 package hardwaresniffer;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class HardwareSnifferReport {
+public class HardwareSnifferReport implements Serializable {
+
+  static final long serialVersionUID = 1L;
 
   private Date reportDate = new Date();
   private String containerName;
-  private long totalPhysicalMemory;
-  private long freePhysicalMemory;
-  private long totalVirtualMemory;
-  private long freeVirtualMemory;
+  private double totalPhysicalMemory;
+  private double freePhysicalMemory;
+  private double totalVirtualMemory;
+  private double freeVirtualMemory;
   private double systemLoadAverage;
   private String operatingSystemName;
   private String virtualMachineName;
 
   public HardwareSnifferReport(
       String containerName,
-      long totalPhysicalMemory,
-      long freePhysicalMemory,
-      long totalVirtualMemory,
-      long freeVirtualMemory,
+      double totalPhysicalMemory,
+      double freePhysicalMemory,
+      double totalVirtualMemory,
+      double freeVirtualMemory,
       double systemLoadAverage,
       String operatingSystemName,
       String virtualMachineName
@@ -35,38 +38,38 @@ public class HardwareSnifferReport {
   }
 
   public Date getReportDate() {
-    return this.reportDate;
+    return reportDate;
   }
 
   public String getContainerName() {
-    return this.containerName;
+    return containerName;
   }
 
-  public long getTotalPhysicalMemory() {
-    return this.totalPhysicalMemory;
+  public double getTotalPhysicalMemory() {
+    return totalPhysicalMemory;
   }
 
-  public long getFreePhysicalMemory() {
-    return this.freePhysicalMemory;
+  public double getFreePhysicalMemory() {
+    return freePhysicalMemory;
   }
 
-  public long getTotalVirtualMemory() {
-    return this.totalVirtualMemory;
+  public double getTotalVirtualMemory() {
+    return totalVirtualMemory;
   }
 
-  public long getFreeVirtualMemory() {
-    return this.freeVirtualMemory;
+  public double getFreeVirtualMemory() {
+    return freeVirtualMemory;
   }
 
   public double getSystemLoadAverage() {
-    return this.systemLoadAverage;
+    return systemLoadAverage;
   }
 
   public String getOperatingSystemName() {
-    return this.operatingSystemName;
+    return operatingSystemName;
   }
 
   public String getVirtualMachineName() {
-    return this.virtualMachineName;
+    return virtualMachineName;
   }
 }

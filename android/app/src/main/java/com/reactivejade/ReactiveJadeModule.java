@@ -2,6 +2,8 @@
 
 package com.reactivejade;
 
+import java.util.UUID;
+
 // https://developer.android.com/reference/android/util/Log.html
 import android.util.Log;
 
@@ -45,6 +47,14 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
   @Override
   public String getName() {
     return "ReactiveJade";
+  }
+
+  private String generateAgentName(String containerName) {
+    return String.format(
+      "HSAgent-%s-%s",
+      containerName,
+      UUID.randomUUID().toString().substring(0, 7)
+    );
   }
 
   @ReactMethod
@@ -114,7 +124,7 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
 
   @ReactMethod
   public void startAgent(
-      String agentName,
+      String containerName,
       Callback successCallback,
       Callback errorCallback
   ) {
@@ -123,7 +133,7 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
     if (agent == null) {
       try {
         agent = container.createNewAgent(
-          agentName,
+          generateAgentName(containerName),
           HardwareSnifferAgent.class.getName(),
           new Object[] {
             this

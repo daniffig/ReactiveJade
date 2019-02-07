@@ -6,18 +6,20 @@ import java.lang.System;
 public abstract class HardwareSniffer {
 
   public abstract double getSystemLoadAverage();
-  public abstract long getTotalPhysicalMemorySize();
-  public abstract long getFreePhysicalMemorySize();
+  public abstract double getTotalPhysicalMemorySize();
+  public abstract double getFreePhysicalMemorySize();
+
+  private static double KiB = 1024.0;
 
   // Estos métodos los podemos implementar acá ya que utilizan las clases System y Runtime,
   // disponibles en las implementaciones de JVM y Dalvik VM (DVM)
   
-  public long getTotalVirtualMemorySize() {
-    return Runtime.getRuntime().totalMemory();
+  public double getTotalVirtualMemorySize() {
+    return Runtime.getRuntime().totalMemory() / KiB;
   }
 
-  public long getFreeVirtualMemorySize() {
-    return Runtime.getRuntime().freeMemory();
+  public double getFreeVirtualMemorySize() {
+    return Runtime.getRuntime().freeMemory() / KiB;
   }
 
   public String getOperatingSystemName() {

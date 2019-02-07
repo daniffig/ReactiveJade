@@ -3,6 +3,7 @@ package hardwaresniffer;
 import java.lang.StringBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -13,6 +14,7 @@ import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.Agent;
 import jade.core.Location;
+import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPANames;
 import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
 import jade.domain.mobility.MobilityOntology;
@@ -30,47 +32,71 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
-  // public Vector<Location> platformContainers;
   public List<Location> platformContainers;
-  public int nextContainerIndex;
   public Location sourceContainer;
 
   public List<HardwareSnifferReport> reportList;
 
-  // public StringBuffer collectedInfo = new StringBuffer();
-
   protected void setup() {
     super.setup();
 
-    logInfo("HardwareSnifferAgent.setup");
+    startJourney();
+  }
 
-    this.getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
-    this.getContentManager().registerOntology(MobilityOntology.getInstance());
+  private void startJourney() {
+    logInfo("I'm " + getName() + " and I'm starting a new adventure at " + (new Date()).toString());
 
-    this.sourceContainer = this.here();
-    this.platformContainers = this.fetchPlatformContainers();
-    this.nextContainerIndex = 0;
+    getContentManager().registerLanguage(new SLCodec(), FIPANames.ContentLanguage.FIPA_SL0);
+    getContentManager().registerOntology(MobilityOntology.getInstance());
+
+    this.sourceContainer = here();
+
+    this.platformContainers = fetchPlatformContainers();
 
     this.reportList = new ArrayList<HardwareSnifferReport>();
 
-    addBehaviour(new HardwareSnifferBehaviour(this, platformContainers));
-    //   this,
-    //   2000L
-    // ));
+    addBehaviour(new HardwareSnifferBehaviour(this, platformContainers));    
   }
 
   @Override
-  protected void afterMove() {  
-    // sendGenericMessage("HardwareSnifferAgent.afterMove");
-    // notifyLocation();
-
-    if (this.sourceContainer.equals(this.here())) {
-      // sendGenericMessage("I'm back at home!");
-
-      this.nextContainerIndex = 0;
+  protected void afterMove() {
+    if (atSourceContainer()) {
+      endJourney();
     } else {
-      this.nextContainerIndex = this.nextContainerIndex + 1;
+      reportList.add(buildHardwareSnifferReport());
     }
+  }
+
+  public void endJourney() {
+    reportList.add(buildHardwareSnifferReport());
+
+    logInfo("I'm " + getName() + " and I'm ending my last new adventure at " + (new Date()).toString());
+
+    addBehaviour(new WakerBehaviour(this, 5000L) {
+
+      protected void onWake() {
+        HardwareSnifferAgent.this.startJourney();
+      }      
+    });
+  }
+
+  private HardwareSnifferReport buildHardwareSnifferReport() {
+    HardwareSniffer hardwareSniffer = HardwareSnifferManager.getManager().getSniffer();
+
+    return new HardwareSnifferReport(
+      here().getName(),
+      hardwareSniffer.getTotalPhysicalMemorySize(),
+      hardwareSniffer.getFreePhysicalMemorySize(),
+      hardwareSniffer.getTotalVirtualMemorySize(),
+      hardwareSniffer.getFreeVirtualMemorySize(),
+      hardwareSniffer.getSystemLoadAverage(),
+      hardwareSniffer.getOperatingSystemName(),
+      hardwareSniffer.getVirtualMachineName()
+    );    
+  }
+
+  private boolean atSourceContainer() {
+    return here().equals(sourceContainer);
   }
 
   public void logInfo(String log) {
@@ -83,29 +109,6 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     ));
   }
 
-  public void notifyLocation() {
-    String msg = "I'm in " + here().getName();
-
-    logInfo(msg);
-  }
-
-  public Location nextLocation() {
-    logInfo("HardwareSnifferAgent.nextLocation");
-
-    Location nextLocation = null;
-
-    if (this.nextContainerIndex < this.platformContainers.size()) {
-      nextLocation = this.platformContainers.get(this.nextContainerIndex);
-    } else {
-      nextLocation = this.sourceContainer;
-    }
-
-    // this.sendGenericMessage(nextLocation.toString());
-
-    return nextLocation;
-  }
-
-  // private Vector<Location> fetchPlatformContainers() {
   private List<Location> fetchPlatformContainers() {
     ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 
@@ -113,35 +116,34 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     request.setOntology(MobilityOntology.NAME);
     request.setProtocol(FIPANames.InteractionProtocol.FIPA_REQUEST);
 
-    Action action = new Action(this.getAMS(), new QueryPlatformLocationsAction());
+    Action action = new Action(getAMS(), new QueryPlatformLocationsAction());
 
     try {
-      this.getContentManager().fillContent(request, action);
+      getContentManager().fillContent(request, action);
 
       request.addReceiver(action.getActor());
 
       send(request);
 
       MessageTemplate messageTemplate = MessageTemplate.and(
-        MessageTemplate.MatchSender(this.getAMS()),
+        MessageTemplate.MatchSender(getAMS()),
         MessageTemplate.MatchPerformative(ACLMessage.INFORM)        
       );
 
-      ACLMessage response = this.blockingReceive(messageTemplate);
+      ACLMessage response = blockingReceive(messageTemplate);
 
-      ContentElement contentElement = this.getContentManager().extractContent(response);
+      ContentElement contentElement = getContentManager().extractContent(response);
 
       Result result = (Result) contentElement;
 
       Iterator iterator = result.getItems().iterator();
 
       List<Location> platformContainers = new ArrayList<Location>();
-      // Vector<Location> platformContainers = new Vector<Location>();
 
       while (iterator.hasNext()) {
         Location location = (Location) iterator.next();
 
-        if (!location.equals(this.here())) {
+        if (!location.equals(here())) {
           platformContainers.add(location);
         }
       }
@@ -154,4 +156,3 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     }
   }
 }
-

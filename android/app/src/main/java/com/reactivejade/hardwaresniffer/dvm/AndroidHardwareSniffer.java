@@ -44,7 +44,7 @@ public class AndroidHardwareSniffer extends HardwareSniffer {
   }
 
   @Override
-  public long getTotalPhysicalMemorySize() {
+  public double getTotalPhysicalMemorySize() {
 
     // Si bien la memoria física de un sistema no suele cambiar,
     // en el caso en que trabajemos sobre máquinas virtuales (por ejemplo, AWS)
@@ -52,32 +52,32 @@ public class AndroidHardwareSniffer extends HardwareSniffer {
     // Es por ello que volvemos a consultar el archivo PROC_MEMINFO.
     List<String> meminfo = populateList(PROC_MEMINFO);
 
-    long totalPhysicalMemory = 0L;
+    double totalPhysicalMemory = 0.0;
 
     // Leemos la primera línea, que corresponde con la memoria física total,
     // y extraemos el valor expresador en KiB.
     Matcher matcher = MEMTOTAL_REGEX.matcher(meminfo.get(0));
 
     if (matcher.find()) {
-      totalPhysicalMemory = Long.parseLong(matcher.group(1));
+      totalPhysicalMemory = Double.parseDouble(matcher.group(1));
     }
 
     return totalPhysicalMemory;
   }
 
   @Override
-  public long getFreePhysicalMemorySize() {
+  public double getFreePhysicalMemorySize() {
 
     List<String> meminfo = populateList(PROC_MEMINFO);
 
-    long freePhysicalMemory = 0L;
+    double freePhysicalMemory = 0.0;
 
     // Leemos la segunda línea, que corresponde con la memoria física libre,
     // y extraemos el valor expresador en KiB.
     Matcher matcher = MEMFREE_REGEX.matcher(meminfo.get(1));
 
     if (matcher.find()) {
-      freePhysicalMemory = Long.parseLong(matcher.group(1));
+      freePhysicalMemory = Double.parseDouble(matcher.group(1));
     }
 
     return freePhysicalMemory;
