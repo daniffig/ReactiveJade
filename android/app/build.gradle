@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-vector-icons')
     compile project(':react-native-device-info')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
@@ -149,6 +150,3 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
-
-// https://github.com/oblador/react-native-vector-icons#android
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

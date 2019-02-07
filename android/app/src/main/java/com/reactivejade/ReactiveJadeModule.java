@@ -81,6 +81,20 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
 
       container = Runtime.instance().createAgentContainer(profile);
 
+      if (container == null) {
+        params.putString(
+          "message",
+          String.format(
+            "an error occurred while starting container %s on host %s:%s",
+            containerName, mainHost, mainPort
+          )
+        );
+
+        errorCallback.invoke(params);
+
+        return;
+      }
+
       try {
         params.putString("assignedContainerName", container.getContainerName());
         params.putString("message", "container succesfully created with name " + container.getContainerName());

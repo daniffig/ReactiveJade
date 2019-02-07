@@ -8,15 +8,26 @@
 
 import React, {Component} from 'react';
 import {
-  Button,
+  // Button,
   DeviceEventEmitter,
   Platform,
+  ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   ToastAndroid,
   View,
 } from 'react-native';
+
+import {
+  Button,
+  Card,
+  Divider,
+  Header,
+  Icon,
+  Input,
+  ListItem,
+  Overlay,
+  Text
+} from 'react-native-elements';
 
 import DeviceInfo from 'react-native-device-info';
 
@@ -38,10 +49,11 @@ export default class App extends Component<Props> {
     this.state = {
       platformHost: '10.1.37.240',
       // platformHost: '192.168.0.6',
-      platformPost: '1099',
+      platformPort: '1099',
       containerName: DeviceInfo.getDeviceName(),
       assignedContainerName: null,
-      assignedAgentName: null
+      assignedAgentName: null,
+      containerConfigurationIsVisible: false
     }
   }
 
@@ -78,7 +90,7 @@ export default class App extends Component<Props> {
 
         console.log(params.message);
         
-        ToastAndroid.show(params.message, ToastAndroid.SHORT);
+        ToastAndroid.show(params.message, ToastAndroid.LONG);
       }
     );
   }
@@ -155,7 +167,6 @@ export default class App extends Component<Props> {
         console.log(params.message);
         
         ToastAndroid.show(params.message, ToastAndroid.SHORT);
-
       }
     );
   }
@@ -168,14 +179,22 @@ export default class App extends Component<Props> {
     );
   }
 
+  toggleContainerConfiguration = () => {
+    this.setState({ containerConfigurationIsVisible: !this.state.containerConfigurationIsVisible });
+  }
+
   render() {
     carrierName = DeviceInfo.getCarrier();
 
     if (this.state.assignedContainerName == null) {
-      containerButton = <Button onPress={this.startContainer} title="Start Container" />;
+      containerButton = <Button
+        // style={{ width: '100%' }}
+        onPress={this.startContainer}
+        title="Start Container" />;
+
       agentButton = null;
     } else {
-      containerButton = <Button onPress={this.stopContainer}  title="Stop Container" />;
+      containerButton = <Button onPress={this.stopContainer} title="Stop Container" />;
 
       if (this.state.assignedAgentName == null) {
         agentButton = <Button onPress={this.startAgent} title="Start Agent" />
@@ -186,24 +205,109 @@ export default class App extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <TextInput
-          onChangeText={(platformHost) => this.setState({platformHost})}
-          value={this.state.platformHost}
+        <Header
+          placement="left"
+          centerComponent={{
+            text: 'ReactiveJade',
+            style: { color: '#ffffff' }
+          }}
+          rightComponent={
+            <Button
+              icon={<Icon name="menu" color="white" />}
+              onPress={this.toggleContainerConfiguration}
+            ></Button>
+          }
         />
-        <TextInput
-          onChangeText={(containerName) => this.setState({containerName})}
-          value={this.state.containerName}
-        />
+        <Overlay isVisible={this.state.containerConfigurationIsVisible}>
+          <View>
+          <Text>Container Configuration</Text>
+          <Input
+            label="platformHost"
+            onChangeText={(platformHost) => this.setState({platformHost})}
+            value={this.state.platformHost}
+          />
+          <Input
+            label="platformPort"
+            onChangeText={(platformPort) => this.setState({platformPort})}
+            value={this.state.platformPort}
+          />
+          <Input
+            label="containerName"
+            onChangeText={(containerName) => this.setState({containerName})}
+            value={this.state.containerName}
+          />
+          <Button
+            title="Close"
+            onPress={this.toggleContainerConfiguration}
+          ></Button>
+          </View>
+        </Overlay>
         {containerButton}
         {agentButton}
-        <Button
-          onPress={this.getContainers}
-          title="getContainers"
+        <Text h4>List of Agents</Text>
+        <ScrollView>
+        <ListItem
+          rightElement={<Icon name="menu" color="black" />}
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
         />
-        <Text style={styles.welcome}>{carrierName}</Text>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        <ListItem
+          key="0"
+          title="ListItem"
+          subtitle="listItem"
+        />
+        </ScrollView>
       </View>
     );
   }
@@ -212,18 +316,24 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  // welcome: {
+  //   fontSize: 20,
+  //   textAlign: 'center',
+  //   margin: 10,
+  // },
+  // instructions: {
+  //   textAlign: 'center',
+  //   color: '#333333',
+  //   marginBottom: 5,
+  // },
+  openContainerConfigurationButton: {
+    color: 'white'
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  containerControlButton: {
+    width: '100%'
+  }
 });
