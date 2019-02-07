@@ -32,6 +32,7 @@ import {
 import DeviceInfo from 'react-native-device-info';
 
 import ReactiveJade from './ReactiveJade';
+import HardwareSnifferReport from './components/HardwareSnifferReport';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -225,6 +226,7 @@ export default class App extends Component<Props> {
             ></Button>
           }
         />
+        <HardwareSnifferReport></HardwareSnifferReport>
         <Overlay
           isVisible={this.state.containerConfigurationIsVisible}
           overlayStyle={{
