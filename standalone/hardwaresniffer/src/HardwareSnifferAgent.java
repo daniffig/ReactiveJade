@@ -76,14 +76,16 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     Date journeyEndedAt = new Date();
 
+    ReactiveJadeMap journeyReport = (new ReactiveJadeMap())
+      .putString("agentName", getName())
+      .putString("sentAt", journeyEndedAt.toString())
+      .putString("elapsedTime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(journeyEndedAt.getTime() - journeyStartedAt.getTime())))
+      .putObject("reportList", reportList);
+
     notifyReactiveJadeEvent(new ReactiveJadeEvent(
       this,
       "reportList",
-      (new ReactiveJadeMap())
-        .putString("agentName", getName())
-        .putString("sentAt", journeyEndedAt.toString())
-        .putString("elapsedTime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(journeyEndedAt.getTime() - journeyStartedAt.getTime())))
-        .putObject("reportList", reportList)
+      journeyReport
     ));
 
     logInfo("I'm " + getName() + " and I'm ending my last adventure at " + (new Date()).toString());
