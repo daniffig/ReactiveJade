@@ -1,12 +1,23 @@
 import React, {Component} from 'react';
 
 import {
-  Button,
   Icon,
   ListItem
 } from 'react-native-elements';
 
 export default class HardwareSnifferJourneyReportListItem extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      reportListIsVisible: false
+    }
+  }
+
+  toggleReportList = () => {
+    this.setState({ reportListIsVisible: !this.state.reportListIsVisible });
+  }
 
   render() {
 
@@ -15,15 +26,13 @@ export default class HardwareSnifferJourneyReportListItem extends React.Componen
     return (
       <ListItem
         rightElement={
-          <Button
-            icon={
-              <Icon name="expand-more" color="black" />
-            }
-            type="clear"
-          />
+          <Icon name="expand-more" color="black" />
         }
         title={journeyReport.agentName}
         subtitle={journeyReport.sentAt}
+        onPress={
+          () => this.props.openHardwareSnifferJourneyReport(journeyReport)
+        }
       />
     )
   }

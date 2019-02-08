@@ -33,13 +33,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import ReactiveJade from './ReactiveJade';
 import HardwareSnifferJourneyReportList from './components/HardwareSnifferJourneyReportList';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import HardwareSnifferJourneyReport from './components/HardwareSnifferJourneyReport';
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -48,14 +42,15 @@ export default class App extends Component<Props> {
     super(props);
 
     this.state = {
-      // platformHost: '10.1.37.240',
-      platformHost: '192.168.0.6',
+      platformHost: '10.1.37.240',
+      // platformHost: '192.168.0.6',
       platformPort: '1099',
       containerName: DeviceInfo.getDeviceName(),
       assignedContainerName: null,
       assignedAgentName: null,
       containerConfigurationIsVisible: false,
-      hardwareSnifferJourneyReportList: []
+      hardwareSnifferJourneyReportList: [],
+      hardwareSnifferJourneyReport: null
     }
   }
 
@@ -177,16 +172,26 @@ export default class App extends Component<Props> {
     );
   }
 
-  getContainers = () => {
-    AgentComponent.getContainers(
-      (msg) => {
-        console.log(msg);
-      }
-    );
-  }
-
   toggleContainerConfiguration = () => {
     this.setState({ containerConfigurationIsVisible: !this.state.containerConfigurationIsVisible });
+  }
+
+  openHardwareSnifferJourneyReport = (hardwareSnifferJourneyReport) => {
+    console.log('App.js > openHardwareSnifferJourneyReport');
+
+    this.setState({
+      hardwareSnifferJourneyReport: hardwareSnifferJourneyReport
+    });
+
+    console.log(hardwareSnifferJourneyReport);
+  }
+
+  closeHardwareSnifferJourneyReport = () => {
+    console.log('App.js > closeHardwareSnifferJourneyReport');
+
+    this.setState(
+      { hardwareSnifferJourneyReport: null }
+    );
   }
 
   render() {
@@ -207,6 +212,16 @@ export default class App extends Component<Props> {
       } else {
         agentButton = <Button onPress={this.stopAgent} title="Stop Agent" />
       }
+    }
+
+    if (this.state.hardwareSnifferJourneyReport == null) {
+      hardwareSnifferJourneyReport = null
+    } else {
+      hardwareSnifferJourneyReport = 
+        <HardwareSnifferJourneyReport
+          journeyReport={this.state.hardwareSnifferJourneyReport}
+          closeHardwareSnifferJourneyReport={this.closeHardwareSnifferJourneyReport}        
+        />
     }
 
     return (
@@ -256,24 +271,16 @@ export default class App extends Component<Props> {
           ></Button>
           </View>
         </Overlay>
+
         {containerButton}
         {agentButton}
+
         <HardwareSnifferJourneyReportList
           journeyReportList={this.state.hardwareSnifferJourneyReportList}
+          openHardwareSnifferJourneyReport={this.openHardwareSnifferJourneyReport}
         />
-        {/* <Text h4>List of Agents</Text>
-        <ScrollView>
-          {
-            this.state.hardwareSnifferReports.map((l, i) => (
-              <ListItem
-                rightElement={<Icon name="menu" color="black" />}
-                key={i}
-                title={l.agentName}
-                subtitle={l.sentAt}
-              />
-            ))
-          }
-        </ScrollView> */}
+
+        {hardwareSnifferJourneyReport}
       </View>
     );
   }
@@ -290,11 +297,6 @@ const styles = StyleSheet.create({
   //   fontSize: 20,
   //   textAlign: 'center',
   //   margin: 10,
-  // },
-  // instructions: {
-  //   textAlign: 'center',
-  //   color: '#333333',
-  //   marginBottom: 5,
   // },
   openContainerConfigurationButton: {
     color: 'white'
