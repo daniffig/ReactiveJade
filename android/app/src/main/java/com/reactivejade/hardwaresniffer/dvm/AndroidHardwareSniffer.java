@@ -33,6 +33,11 @@ public class AndroidHardwareSniffer extends HardwareSniffer {
     this.cpuinfo = populateList(PROC_CPUINFO);
   }
 
+  // A partir de Android API Level 24 (Nougat),
+  // Google quitó el acceso a ciertos archivos de /proc,
+  // entre ellos /proc/loadavg, que es el que nos provee este dato.
+  // https://github.com/termux/termux-app/issues/299
+  // https://issuetracker.google.com/issues/37140047
   @Override
   public double getSystemLoadAverage() {
 

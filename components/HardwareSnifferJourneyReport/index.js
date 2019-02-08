@@ -27,12 +27,14 @@ export default class HardwareSnifferJourneyReport extends React.Component {
       <Overlay isVisible={isVisible}
         onBackdropPress={this.props.closeHardwareSnifferJourneyReport}
       >
-        <View>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
           <Text>
             <Text style={{fontWeight: "bold"}}>Reported by </Text>
             <Text>{journeyReport.agentName}</Text>
             <Text style={{fontWeight: "bold"}}> at </Text>
             <Text>{journeyReport.sentAt}</Text>
+            <Text style={{fontWeight: "bold"}}> taking </Text>
+            <Text>{journeyReport.elapsedTime}ms</Text>
           </Text>
           <Divider />
           <ScrollView overScrollMode="never">
