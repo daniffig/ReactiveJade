@@ -32,7 +32,7 @@ import {
 import DeviceInfo from 'react-native-device-info';
 
 import ReactiveJade from './ReactiveJade';
-import HardwareSnifferReport from './components/HardwareSnifferReport';
+import HardwareSnifferJourneyReportList from './components/HardwareSnifferJourneyReportList';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -48,14 +48,14 @@ export default class App extends Component<Props> {
     super(props);
 
     this.state = {
-      platformHost: '10.1.37.240',
-      // platformHost: '192.168.0.6',
+      // platformHost: '10.1.37.240',
+      platformHost: '192.168.0.6',
       platformPort: '1099',
       containerName: DeviceInfo.getDeviceName(),
       assignedContainerName: null,
       assignedAgentName: null,
       containerConfigurationIsVisible: false,
-      hardwareSnifferReports: []
+      hardwareSnifferJourneyReportList: []
     }
   }
 
@@ -68,10 +68,8 @@ export default class App extends Component<Props> {
 
     DeviceEventEmitter.addListener('reportList', function(params) {
       _this.setState({
-        hardwareSnifferReports: [params, ..._this.state.hardwareSnifferReports]
+        hardwareSnifferJourneyReportList: [params, ..._this.state.hardwareSnifferJourneyReportList]
       });
-
-      console.log(params);
     });
   }
 
@@ -226,7 +224,6 @@ export default class App extends Component<Props> {
             ></Button>
           }
         />
-        <HardwareSnifferReport></HardwareSnifferReport>
         <Overlay
           isVisible={this.state.containerConfigurationIsVisible}
           overlayStyle={{
@@ -261,49 +258,10 @@ export default class App extends Component<Props> {
         </Overlay>
         {containerButton}
         {agentButton}
-        {/* <Card
-          title="Report for {aString}"
-          titleStyle={{
-            textAlign: 'left'
-          }}
-        > */}
-          {/* <ScrollView>
-            <ListItem
-              title="reportDate"
-              subtitle="{aDate}"
-            />
-            <ListItem
-              title="totalPhysicalMemory"
-              subtitle="{aString}"
-            />
-            <ListItem
-              title="freePhysicalMemory"
-              subtitle="{aString}"
-            />
-            <ListItem
-              title="totalVirtualMemory"
-              subtitle="{aString}"
-            />
-            <ListItem
-              title="freeVirtualMemory"
-              subtitle="{aString}"
-            />
-            <ListItem
-              title="systemLoadAverage"
-              subtitle="{aString}"
-            />
-            <ListItem
-              title="operatingSystemName"
-              subtitle="{aString}"
-            />
-            <ListItem
-              title="virtualMachineName"
-              subtitle="{aString}"
-            />
-          </ScrollView>
-
-        </Card> */}
-        <Text h4>List of Agents</Text>
+        <HardwareSnifferJourneyReportList
+          journeyReportList={this.state.hardwareSnifferJourneyReportList}
+        />
+        {/* <Text h4>List of Agents</Text>
         <ScrollView>
           {
             this.state.hardwareSnifferReports.map((l, i) => (
@@ -315,7 +273,7 @@ export default class App extends Component<Props> {
               />
             ))
           }
-        </ScrollView>
+        </ScrollView> */}
       </View>
     );
   }
