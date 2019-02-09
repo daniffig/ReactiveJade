@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// Documentación sobre cómo utilizar la información disponible en /proc
+// Documentacion sobre como utilizar la informacion disponible en /proc
 // https://linux.die.net/man/5/proc
 // http://www.brendangregg.com/blog/2017-08-08/linux-load-averages.html
 
 public class LinuxHardwareSniffer extends HardwareSniffer {
 
-  // Documentación útil sobre expresiones regulares en Java
+  // Documentacion util sobre expresiones regulares en Java
   // http://www.vogella.com/tutorials/JavaRegularExpressions/article.html
 
   // Para realizar pruebas con expresiones regulares en Java
@@ -27,7 +27,7 @@ public class LinuxHardwareSniffer extends HardwareSniffer {
   private static final Pattern MEMFREE_REGEX = Pattern.compile("^MemFree:\\s*(\\d+)\\skB$");
   private static final Pattern LOADAVG_REGEX = Pattern.compile("^(\\d+\\.\\d+)\\s(\\d+\\.\\d+)\\s(\\d+\\.\\d+)\\s(\\d+\\/\\d+)\\s(\\d+)$");
 
-  // Finalmente, esto no lo usamos, pero conservamos el código
+  // Finalmente, esto no lo usamos, pero conservamos el codigo
   // en caso de agregar alguna funcionalidad en el futuro.
   private final List<String> cpuinfo;
 
@@ -45,12 +45,12 @@ public class LinuxHardwareSniffer extends HardwareSniffer {
     double systemLoadAverage = 0.0;
 
     if (loadavg != null) {
-      // Leemos la única línea, que devuelve el promedio de carga del sistema
-      // en los últimos 1, 5, y 15 minutos.
+      // Leemos la unica linea, que devuelve el promedio de carga del sistema
+      // en los ultimos 1, 5, y 15 minutos.
       Matcher matcher = LOADAVG_REGEX.matcher(loadavg.get(0));
 
       // Devolvemos el primer valor, que corresponde con el promedio de carga del sistema
-      // en el último minuto.
+      // en el ultimo minuto.
       if (matcher.find()) {
         systemLoadAverage = Double.parseDouble(matcher.group(1));
       }
@@ -62,15 +62,15 @@ public class LinuxHardwareSniffer extends HardwareSniffer {
   @Override
   public double getTotalPhysicalMemorySize() {
 
-    // Si bien la memoria física de un sistema no suele cambiar,
-    // en el caso en que trabajemos sobre máquinas virtuales (por ejemplo, AWS)
-    // puede ocurrir que exista una asignación de memoria on-the-fly.
+    // Si bien la memoria fisica de un sistema no suele cambiar,
+    // en el caso en que trabajemos sobre maquinas virtuales (por ejemplo, AWS)
+    // puede ocurrir que exista una asignacion de memoria on-the-fly.
     // Es por ello que volvemos a consultar el archivo PROC_MEMINFO.
     List<String> meminfo = populateList(PROC_MEMINFO);
 
     double totalPhysicalMemory = 0L;
 
-    // Leemos la primera línea, que corresponde con la memoria física total,
+    // Leemos la primera linea, que corresponde con la memoria fisica total,
     // y extraemos el valor expresador en KiB.
     Matcher matcher = MEMTOTAL_REGEX.matcher(meminfo.get(0));
 
@@ -88,7 +88,7 @@ public class LinuxHardwareSniffer extends HardwareSniffer {
 
     double freePhysicalMemory = 0.0;
 
-    // Leemos la segunda línea, que corresponde con la memoria física libre,
+    // Leemos la segunda linea, que corresponde con la memoria fisica libre,
     // y extraemos el valor expresador en KiB.
     Matcher matcher = MEMFREE_REGEX.matcher(meminfo.get(1));
 
@@ -99,9 +99,9 @@ public class LinuxHardwareSniffer extends HardwareSniffer {
     return freePhysicalMemory;
   }
 
-  // Cargamos la información de los archivos de sistema en una lista,
-  // de manera tal de poder acceder fácilmente a los datos disponibles
-  // en cada línea.
+  // Cargamos la informacion de los archivos de sistema en una lista,
+  // de manera tal de poder acceder facilmente a los datos disponibles
+  // en cada linea.
   private List<String> populateList(String file) {
 
     List<String> list = new ArrayList<String>();

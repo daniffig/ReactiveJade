@@ -11,7 +11,7 @@ public abstract class HardwareSniffer {
 
   private static double KiB = 1024.0;
 
-  // Estos métodos los podemos implementar acá ya que utilizan las clases System y Runtime,
+  // Estos metodos los podemos implementar aca ya que utilizan las clases System y Runtime,
   // disponibles en las implementaciones de JVM y Dalvik VM (DVM)
   
   public double getTotalVirtualMemorySize() {

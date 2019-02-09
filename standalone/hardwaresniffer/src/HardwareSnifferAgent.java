@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import jade.content.ContentElement;
@@ -26,8 +24,7 @@ import jade.util.Logger;
 import reactivejade.ReactiveJadeAgent;
 import reactivejade.ReactiveJadeEvent;
 import reactivejade.ReactiveJadeMap;
-
-import hardwaresniffer.HardwareSnifferBehaviour;
+import reactivejade.ReactiveJadeSubscriptionService;
 
 public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
@@ -41,6 +38,8 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   protected void setup() {
     super.setup();
+
+    ReactiveJadeSubscriptionService.subscribe(this.getClass().getName(), new HardwareSnifferReporter());
 
     startJourney();
   }
@@ -79,7 +78,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     ReactiveJadeMap journeyReport = (new ReactiveJadeMap())
       .putString("agentName", getName())
       .putString("sentAt", journeyEndedAt.toString())
-      .putString("elapsedTime", String.valueOf(TimeUnit.MILLISECONDS.toSeconds(journeyEndedAt.getTime() - journeyStartedAt.getTime())))
+      .putString("elapsedTime", String.valueOf(journeyEndedAt.getTime() - journeyStartedAt.getTime()))
       .putObject("reportList", reportList);
 
     notifyReactiveJadeEvent(new ReactiveJadeEvent(
@@ -118,8 +117,6 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   }
 
   public void logInfo(String log) {
-    logger.log(Level.INFO, log);
-
     notifyReactiveJadeEvent(new ReactiveJadeEvent(
       this,
       "log",
