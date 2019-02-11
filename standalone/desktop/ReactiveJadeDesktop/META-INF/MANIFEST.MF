@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: jade.jar
+Class-Path: . lib/jade.jar
 Created-By: 1.8.0_191 (Oracle Corporation)
 Main-Class: Boot
 

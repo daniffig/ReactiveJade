@@ -1,3 +1,5 @@
+package reactivejade.desktop;
+
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;

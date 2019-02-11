@@ -1,0 +1,1 @@
+( ap-description  :name "HardwareSnifferPlatform" :ap-services (set ( ap-service  :name fipa.mts.mtp.http.std :type fipa.mts.mtp.http.std :addresses (sequence http://j:7778/acc))))

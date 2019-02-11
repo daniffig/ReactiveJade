@@ -7,7 +7,7 @@ SOURCE_PATH="$SCRIPT_PATH/src"
 SOURCE_FILES="$SOURCE_PATH/*.java"
 DIST_PATH="$SCRIPT_PATH/../dist"
 
-DESKTOP_JAR="$DIST_PATH/ReactiveJadeDesktop.jar"
+DESKTOP_JAR="$SCRIPT_PATH/ReactiveJadeDesktop.jar"
 
 # REACTIVEJADE_JAR="$LIB_PATH/ReactiveJade.jar"
 # HARDWARESNIFFER_JAR="$LIB_PATH/HardwareSniffer.jar"
