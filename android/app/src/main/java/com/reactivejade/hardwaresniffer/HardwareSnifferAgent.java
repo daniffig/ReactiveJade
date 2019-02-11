@@ -58,6 +58,8 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     this.reportList = new ArrayList<HardwareSnifferReport>();
 
+    this.doWait(5000L);
+
     addBehaviour(new HardwareSnifferBehaviour(this, platformContainers));    
   }
 
