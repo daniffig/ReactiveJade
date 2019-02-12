@@ -42,6 +42,8 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     ReactiveJadeSubscriptionService.subscribe(this.getClass().getName(), new HardwareSnifferReporter());
 
+    addLogHandler(new HardwareSnifferLogHandler(this));
+
     startJourney();
   }
 
@@ -57,10 +59,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     this.platformContainers = fetchPlatformContainers();
 
-    ContainerID fakeContainer = new ContainerID();
-    fakeContainer.setName("fakeContainer");
-
-    this.platformContainers.add(fakeContainer);
+    addFakeContainer();
 
     this.reportList = new ArrayList<HardwareSnifferReport>();
 
@@ -136,6 +135,13 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
       this,
       "log",
       (new ReactiveJadeMap()).putString("message", log)
+    ));
+  }
+
+  private void addFakeContainer() {
+    this.platformContainers.add(new ContainerID(
+      "fakeContainer",
+      null
     ));
   }
 

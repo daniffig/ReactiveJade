@@ -1,11 +1,13 @@
 package reactivejade;
 
+import java.lang.SecurityException;
+import java.util.logging.Handler;
+
 import jade.core.Agent;
 
 import jade.core.Location;
-import jade.core.ServiceException;
-import jade.core.mobility.AgentMobilityHelper;
-import jade.core.mobility.Movable;
+import jade.core.mobility.AgentMobilityService;
+import jade.util.Logger;
 
 import reactivejade.ReactiveJadeEvent;
 import reactivejade.ReactiveJadeEventEmitter;
@@ -17,38 +19,15 @@ public abstract class ReactiveJadeAgent extends Agent implements ReactiveJadeEve
     ReactiveJadeSubscriptionService.notify(event);
   }
 
+  public void addLogHandler(Handler handler) {
+    Logger logger = Logger.getJADELogger(AgentMobilityService.NAME);
+
+    try {
+      logger.addHandler(handler);
+    } catch (SecurityException se) {
+
+    }
+  }
+
   public abstract void onMoveError(Location destination, String errorMessage);
-  
-  // Copiado de la clase jade.core.Agent para poder reimplementar
-  // el manejo de errores (que esta originalmente marcado con FIXME).
-	private transient AgentMobilityHelper mobHelper;
-
-	private void initMobHelper() throws ServiceException {
-		if (mobHelper == null) {
-			mobHelper = (AgentMobilityHelper) getHelper(AgentMobilityHelper.NAME);
-			mobHelper.registerMovable(new Movable() {
-				public void beforeMove() {
-					ReactiveJadeAgent.this.beforeMove();
-				}
-
-				public void afterMove() {
-					ReactiveJadeAgent.this.afterMove();
-				}
-
-				public void beforeClone() {
-					ReactiveJadeAgent.this.beforeClone();
-				}
-
-				public void afterClone() {
-					ReactiveJadeAgent.this.afterClone();
-				}
-			} );
-		}
-	}
-	
-	public AgentMobilityHelper getMobHelper() throws Exception {
-		initMobHelper();
-
-		return mobHelper;
-	}
 }

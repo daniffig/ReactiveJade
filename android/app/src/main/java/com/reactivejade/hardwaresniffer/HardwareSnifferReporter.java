@@ -44,17 +44,28 @@ public class HardwareSnifferReporter implements ReactiveJadeSubscribable {
     String reportList = "";
 
     for (HardwareSnifferReport report : (List<HardwareSnifferReport>) params.get("reportList")) {
-      reportList = reportList +
-        TAB + "Container.Name: " + report.getContainerName() + BR +
-        TAB + "Report.Date: " + report.getReportDate().toString() + BR +
-        TAB + "PhysicalMemory.Total: " + formatMemory(report.getTotalPhysicalMemory()) + BR +
-        TAB + "PhysicalMemory.Free: " + formatMemory(report.getFreePhysicalMemory()) + BR +
-        TAB + "VirtualMemory.Total: " + formatMemory(report.getTotalVirtualMemory()) + BR +
-        TAB + "VirtualMemory.Free: " + formatMemory(report.getFreeVirtualMemory()) + BR +
-        TAB + "System.LoadAverage: " + String.valueOf(report.getSystemLoadAverage()) + BR +
-        TAB + "OperatingSystem.Name: " + report.getOperatingSystemName() + BR +
-        TAB + "VirtualMachine.Name: " + report.getVirtualMachineName() + BR +
-        TAB + DIVIDER + BR;        
+      if (report.hasError()) {
+        reportList = reportList +
+          TAB + "Container.Name: " + report.getContainerName() + BR +
+          TAB + "Report.Date: " + report.getReportDate().toString() + BR +
+          TAB + "Report.hasError: " + String.valueOf(report.hasError()) + BR +
+          TAB + "Report.errorMessage: " + report.getErrorMessage() + BR;
+      } else {
+        reportList = reportList +
+          TAB + "Container.Name: " + report.getContainerName() + BR +
+          TAB + "Report.Date: " + report.getReportDate().toString() + BR +
+          TAB + "Report.hasError: " + String.valueOf(report.hasError()) + BR +
+          TAB + "PhysicalMemory.Total: " + formatMemory(report.getTotalPhysicalMemory()) + BR +
+          TAB + "PhysicalMemory.Free: " + formatMemory(report.getFreePhysicalMemory()) + BR +
+          TAB + "VirtualMemory.Total: " + formatMemory(report.getTotalVirtualMemory()) + BR +
+          TAB + "VirtualMemory.Free: " + formatMemory(report.getFreeVirtualMemory()) + BR +
+          TAB + "System.LoadAverage: " + String.valueOf(report.getSystemLoadAverage()) + BR +
+          TAB + "OperatingSystem.Name: " + report.getOperatingSystemName() + BR +
+          TAB + "VirtualMachine.Name: " + report.getVirtualMachineName() + BR;
+      }      
+      
+      reportList = reportList + 
+        TAB + DIVIDER + BR;  
     }
 
     LOGGER.log(Level.INFO, header + reportList);
