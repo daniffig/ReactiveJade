@@ -12,6 +12,7 @@ import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
 import jade.content.onto.basic.Result;
 import jade.core.Agent;
+import jade.core.ContainerID;
 import jade.core.Location;
 import jade.core.behaviours.WakerBehaviour;
 import jade.domain.FIPANames;
@@ -56,9 +57,12 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     this.platformContainers = fetchPlatformContainers();
 
-    this.reportList = new ArrayList<HardwareSnifferReport>();
+    ContainerID fakeContainer = new ContainerID();
+    fakeContainer.setName("fakeContainer");
 
-    this.doWait(5000L);
+    this.platformContainers.add(fakeContainer);
+
+    this.reportList = new ArrayList<HardwareSnifferReport>();
 
     addBehaviour(new HardwareSnifferBehaviour(this, platformContainers));    
   }
@@ -116,6 +120,15 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
   private boolean atSourceContainer() {
     return here().equals(sourceContainer);
+  }
+
+  public void onMoveError(Location destination, String errorMessage) {
+    System.out.println("HardwareSnifferAgent > onMoveError");
+    
+    logInfo(errorMessage);
+    
+    reportList.add(new HardwareSnifferReport(
+      true, destination.getName(), errorMessage));
   }
 
   public void logInfo(String log) {

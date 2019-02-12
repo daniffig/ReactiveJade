@@ -9,6 +9,9 @@ public class HardwareSnifferReport implements Serializable {
 
   static final long serialVersionUID = 1L;
 
+  private boolean hasError = false;
+  private String errorMessage;
+
   private Date reportDate = new Date();
   private String containerName;
   private double totalPhysicalMemory;
@@ -18,6 +21,16 @@ public class HardwareSnifferReport implements Serializable {
   private double systemLoadAverage;
   private String operatingSystemName;
   private String virtualMachineName;
+
+  public HardwareSnifferReport(
+      Boolean hasError,
+      String containerName,
+      String errorMessage
+  ) {
+    this.hasError = hasError;
+    this.containerName = containerName;
+    this.errorMessage = errorMessage;
+  }
 
   public HardwareSnifferReport(
       String containerName,
@@ -75,8 +88,18 @@ public class HardwareSnifferReport implements Serializable {
     return virtualMachineName;
   }
 
+  public boolean hasError() {
+    return hasError;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
   public ReactiveJadeMap toMap() {
     return (new ReactiveJadeMap())
+      .putBoolean("hasError", hasError)
+      .putString("errorMessage", errorMessage)
       .putString("reportDate", reportDate.toString())
       .putString("containerName", containerName)
       .putDouble("totalPhysicalMemory", totalPhysicalMemory)
