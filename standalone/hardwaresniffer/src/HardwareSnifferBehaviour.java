@@ -7,6 +7,8 @@ import jade.core.Agent;
 import jade.core.Location;
 import jade.core.behaviours.CyclicBehaviour;
 
+import jade.core.ContainerID;
+
 public class HardwareSnifferBehaviour extends CyclicBehaviour {
 
   private List<Location> journey;
@@ -22,7 +24,11 @@ public class HardwareSnifferBehaviour extends CyclicBehaviour {
     HardwareSnifferAgent agent = (HardwareSnifferAgent) getAgent();
 
     if (hasNextLocation()) {      
-      agent.doMove(nextLocation());
+      // agent.doMove(nextLocation());
+      ContainerID location = new ContainerID();
+      location.setName("Fede");
+
+      agent.doMove(location);
     } else {
       agent.removeBehaviour(this);
       
