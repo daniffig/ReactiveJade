@@ -128,11 +128,15 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
         container.kill();
 
         container = null;
+        agent = null;
 
         params.putString("message", "container succesfully stopped");
 
         successCallback.invoke(params);
       } catch (StaleProxyException e) {
+        container = null;
+        agent = null;
+        
         params.putString("message", e.getMessage());
 
         errorCallback.invoke(params);
@@ -223,6 +227,7 @@ public class ReactiveJadeModule extends ReactContextBaseJavaModule implements Re
   }
 
   private void notifyReportList(ReactiveJadeMap reactiveJadeMap) {
+
     WritableMap params = Arguments.createMap();
 
     params.putString("agentName", (String) reactiveJadeMap.get("agentName"));

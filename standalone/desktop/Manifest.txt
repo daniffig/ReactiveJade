@@ -1,3 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: ../lib/jade.jar ../lib/ReactiveJade.jar ../lib/HardwareSniffer.jar
-Main-Class: reactivejade.desktop.Boot

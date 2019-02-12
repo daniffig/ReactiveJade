@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import android.util.Log;
+
 import jade.content.ContentElement;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.basic.Action;
@@ -20,7 +22,6 @@ import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
 import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.util.Logger;
 
 import reactivejade.ReactiveJadeAgent;
 import reactivejade.ReactiveJadeEvent;
@@ -28,8 +29,6 @@ import reactivejade.ReactiveJadeMap;
 import reactivejade.ReactiveJadeSubscriptionService;
 
 public class HardwareSnifferAgent extends ReactiveJadeAgent {
-
-  private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
   public Date journeyStartedAt;
   public List<Location> platformContainers;
@@ -63,11 +62,18 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     this.reportList = new ArrayList<HardwareSnifferReport>();
 
+    Log.w("ReactNative", "startJourney > size: " + String.valueOf(this.platformContainers.size()));
+
+    for (Location l : this.platformContainers) {
+      Log.w("ReactNative", "startJourney > " + l.getName());
+
+    }
+
     addBehaviour(new HardwareSnifferBehaviour(this, platformContainers));    
   }
 
   @Override
-  protected void afterMove() {
+  protected void afterMove() {    
     if (atSourceContainer()) {
       endJourney();
     } else {
@@ -121,10 +127,10 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     return here().equals(sourceContainer);
   }
 
-  public void onMoveError(Location destination, String errorMessage) {
-    System.out.println("HardwareSnifferAgent > onMoveError");
-    
+  public void onMoveError(Location destination, String errorMessage) {    
     logInfo(errorMessage);
+
+    Log.w("ReactNative", "HardwareSnifferAgent > onMoveError");
     
     reportList.add(new HardwareSnifferReport(
       true, destination.getName(), errorMessage));
@@ -139,10 +145,11 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   }
 
   private void addFakeContainer() {
-    this.platformContainers.add(new ContainerID(
-      "fakeContainer",
-      null
-    ));
+    ContainerID fakeContainer = new ContainerID();
+
+    fakeContainer.setName("fakeContainer");
+
+    this.platformContainers.add(fakeContainer);
   }
 
   private List<Location> fetchPlatformContainers() {

@@ -20,10 +20,10 @@ public abstract class ReactiveJadeAgent extends Agent implements ReactiveJadeEve
   }
 
   public void addLogHandler(Handler handler) {
-    Logger logger = Logger.getJADELogger(AgentMobilityService.NAME);
+    Logger jadeAMSLogger = Logger.getJADELogger(AgentMobilityService.NAME);
 
     try {
-      logger.addHandler(handler);
+      jadeAMSLogger.addHandler(handler);
     } catch (SecurityException se) {
 
     }

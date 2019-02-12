@@ -20,7 +20,6 @@ import jade.domain.JADEAgentManagement.QueryPlatformLocationsAction;
 import jade.domain.mobility.MobilityOntology;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.util.Logger;
 
 import reactivejade.ReactiveJadeAgent;
 import reactivejade.ReactiveJadeEvent;
@@ -28,8 +27,6 @@ import reactivejade.ReactiveJadeMap;
 import reactivejade.ReactiveJadeSubscriptionService;
 
 public class HardwareSnifferAgent extends ReactiveJadeAgent {
-
-  private static Logger logger = Logger.getJADELogger(HardwareSnifferAgent.class.getName());
 
   public Date journeyStartedAt;
   public List<Location> platformContainers;
@@ -59,7 +56,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     this.platformContainers = fetchPlatformContainers();
 
-    // addFakeContainer();
+    addFakeContainer();
 
     this.reportList = new ArrayList<HardwareSnifferReport>();
 
@@ -67,7 +64,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   }
 
   @Override
-  protected void afterMove() {
+  protected void afterMove() {    
     if (atSourceContainer()) {
       endJourney();
     } else {
@@ -121,9 +118,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
     return here().equals(sourceContainer);
   }
 
-  public void onMoveError(Location destination, String errorMessage) {
-    System.out.println("HardwareSnifferAgent > onMoveError");
-    
+  public void onMoveError(Location destination, String errorMessage) {    
     logInfo(errorMessage);
     
     reportList.add(new HardwareSnifferReport(

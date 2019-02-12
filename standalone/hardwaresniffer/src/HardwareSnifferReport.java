@@ -10,7 +10,7 @@ public class HardwareSnifferReport implements Serializable {
   static final long serialVersionUID = 1L;
 
   private boolean hasError = false;
-  private String errorMessage;
+  private String errorMessage = "";
 
   private Date reportDate = new Date();
   private String containerName;
