@@ -4,8 +4,6 @@ import java.lang.System;
 import java.util.List;
 import java.util.logging.Level;
 
-import android.util.Log;
-
 import jade.util.Logger;
 
 import reactivejade.ReactiveJadeEvent;
@@ -37,7 +35,6 @@ public class HardwareSnifferReporter implements ReactiveJadeSubscribable {
 
   @SuppressWarnings("unchecked")
   private void printReportList(ReactiveJadeMap params) {
-    Log.w("ReactNative", "HardwareSnifferReporter > printReportList");
 
     String header = 
       String.format("Reported by %s at %s taking %sms",
@@ -47,9 +44,7 @@ public class HardwareSnifferReporter implements ReactiveJadeSubscribable {
     String reportList = "";
 
     for (HardwareSnifferReport report : (List<HardwareSnifferReport>) params.get("reportList")) {
-      Log.w("ReactNative", "HardwareSnifferReporter > printReportList > " + report.getContainerName());
       if (report.hasError()) {
-        Log.w("ReactNative", "HardwareSnifferReporter > printReportList > report has error");
         reportList = reportList +
           TAB + "Container.Name: " + report.getContainerName() + BR +
           TAB + "Report.Date: " + report.getReportDate().toString() + BR +
