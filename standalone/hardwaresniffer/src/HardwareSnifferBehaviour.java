@@ -21,8 +21,14 @@ public class HardwareSnifferBehaviour extends CyclicBehaviour {
   public void action() {
     HardwareSnifferAgent agent = (HardwareSnifferAgent) getAgent();
 
-    if (hasNextLocation()) {    
-      agent.doMove(nextLocation()); 
+    checkMoveError();
+
+    if (hasNextLocation()) {
+      Location destination = nextLocation();
+
+      agent.lastIntendedDestination = destination;
+
+      agent.doMove(destination);
     } else {
       agent.removeBehaviour(this);
       
@@ -30,6 +36,24 @@ public class HardwareSnifferBehaviour extends CyclicBehaviour {
         agent.endJourney();
       } else {
         agent.doMove(agent.sourceContainer);
+      }
+    }
+  }
+
+  private void checkMoveError() {
+    HardwareSnifferAgent agent = (HardwareSnifferAgent) getAgent();
+
+    if (agent.lastIntendedDestination != null) {
+      if (!agent.here().equals(agent.lastIntendedDestination)) {
+        agent.onMoveError(
+          agent.lastIntendedDestination,
+          String.format(
+            "an error occurred while %s intended to move to %s",
+            agent.getName(),
+            agent.lastIntendedDestination.getName()
+          )
+        );
+        agent.lastIntendedDestination = null;
       }
     }
   }

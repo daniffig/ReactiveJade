@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 
 import jade.content.ContentElement;
 import jade.content.lang.sl.SLCodec;
@@ -31,15 +30,18 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
   public Date journeyStartedAt;
   public List<Location> platformContainers;
   public Location sourceContainer;
+  public Location lastIntendedDestination;
 
   public List<HardwareSnifferReport> reportList;
 
+  static {
+    ReactiveJadeSubscriptionService.subscribe(
+      HardwareSnifferAgent.class.getCanonicalName(),
+      new HardwareSnifferReporter());
+  }
+
   protected void setup() {
     super.setup();
-
-    ReactiveJadeSubscriptionService.subscribe(this.getClass().getName(), new HardwareSnifferReporter());
-
-    addLogHandler(new HardwareSnifferLogHandler(this));
 
     startJourney();
   }
@@ -91,7 +93,7 @@ public class HardwareSnifferAgent extends ReactiveJadeAgent {
 
     logInfo("I'm " + getName() + " and I'm ending my last adventure at " + (new Date()).toString());
 
-    addBehaviour(new WakerBehaviour(this, 5000L) {
+    addBehaviour(new WakerBehaviour(this, 10000L) {
 
       protected void onWake() {
         HardwareSnifferAgent.this.startJourney();

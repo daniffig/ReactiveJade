@@ -10,6 +10,12 @@ public class ReactiveJadeMap extends HashMap<String, Object> {
     super();
   }
 
+  public ReactiveJadeMap putNull(String key) {
+    put(key, null);
+
+    return this;
+  }
+
   public ReactiveJadeMap putBoolean(String key, Boolean value) {
     put(key, value);
 

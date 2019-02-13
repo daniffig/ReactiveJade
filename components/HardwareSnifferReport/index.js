@@ -25,16 +25,33 @@ export default class HardwareSnifferReport extends React.Component {
 
     const report = this.props.report;
 
-    return (
+    reportCommon =
+    <View>
+      <Text>  
+        <Text style={styles.reportDt}>Container.Name: </Text>
+        <Text style={styles.reportDd}>{report.containerName}</Text>
+      </Text>
+      <Text>
+        <Text style={styles.reportDt}>Report.Date: </Text>
+        <Text style={styles.reportDd}>{report.reportDate}</Text>
+      </Text>
+    </View>
+
+    if (report.hasError) {
+      reportDetail =
       <View>
         <Text>
-          <Text style={styles.reportDt}>Container.Name: </Text>
-          <Text style={styles.reportDd}>{report.containerName}</Text>
+          <Text style={styles.reportDt}>Report.hasError: </Text>
+          <Text style={styles.reportDd}>{report.hasError.toString()}</Text>
         </Text>
         <Text>
-          <Text style={styles.reportDt}>Report.Date: </Text>
-          <Text style={styles.reportDd}>{report.reportDate}</Text>
+          <Text style={styles.reportDt}>Report.errorMessage: </Text>
+          <Text style={styles.reportDd}>{report.errorMessage}</Text>
         </Text>
+      </View>
+    } else {      
+      reportDetail = 
+      <View>
         <Text>
           <Text style={styles.reportDt}>PhysicalMemory.Total: </Text>
           <Text style={styles.reportDd}>{ this.formatMemory(report.totalPhysicalMemory) }</Text>
@@ -64,11 +81,16 @@ export default class HardwareSnifferReport extends React.Component {
           <Text style={styles.reportDd}>{report.virtualMachineName}</Text>
         </Text>
       </View>
+    }
+
+    return (
+      <View>
+        {reportCommon}
+        {reportDetail}
+      </View>
     )
   }
 }
-
-
 
 const styles = StyleSheet.create({
   reportDt: {

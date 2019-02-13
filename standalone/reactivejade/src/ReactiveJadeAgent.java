@@ -1,13 +1,8 @@
 package reactivejade;
 
-import java.lang.SecurityException;
-import java.util.logging.Handler;
-
 import jade.core.Agent;
 
 import jade.core.Location;
-import jade.core.mobility.AgentMobilityService;
-import jade.util.Logger;
 
 import reactivejade.ReactiveJadeEvent;
 import reactivejade.ReactiveJadeEventEmitter;
@@ -17,16 +12,6 @@ public abstract class ReactiveJadeAgent extends Agent implements ReactiveJadeEve
 
   public void notifyReactiveJadeEvent(ReactiveJadeEvent event) {
     ReactiveJadeSubscriptionService.notify(event);
-  }
-
-  public void addLogHandler(Handler handler) {
-    Logger jadeAMSLogger = Logger.getJADELogger(AgentMobilityService.NAME);
-
-    try {
-      jadeAMSLogger.addHandler(handler);
-    } catch (SecurityException se) {
-
-    }
   }
 
   public abstract void onMoveError(Location destination, String errorMessage);

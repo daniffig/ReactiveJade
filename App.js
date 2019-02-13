@@ -42,8 +42,8 @@ export default class App extends Component<Props> {
     super(props);
 
     this.state = {
-      platformHost: '10.1.37.240',
-      // platformHost: '192.168.0.6',
+      // platformHost: '10.1.37.240',
+      platformHost: '192.168.0.6',
       // platformHost: '192.168.0.10',
       platformPort: '1099',
       containerName: DeviceInfo.getDeviceName(),
